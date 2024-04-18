@@ -4,14 +4,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     submenu11.addEventListener('click', function(event) {
         event.preventDefault();
-        console.log("submenu11 clicked");
         handleMenuClick51();
     });
 });
 
 // Function to handle menu clicks
 function handleMenuClick51() {
-
     // Hide the Menu
     document.querySelector('.side-menu').style.display = 'none';
 
@@ -47,13 +45,13 @@ function handleMenuClick51() {
 
     // Event listener for type change
     document.getElementById("selectType").addEventListener("change", function() {
-        console.log("selectType change event triggered");
+        //console.log("selectType change event triggered");
         fetchChartData51();
     });
 
     // Event listener for year change
     document.getElementById("yearSelect").addEventListener("change", function() {
-        console.log("yearSelect change event triggered");
+        //console.log("yearSelect change event triggered");
         fetchChartData51();
     });
 }
@@ -69,7 +67,7 @@ function fetchChartData51() {
         apiUrl = `http://127.0.0.1:5000/api/v1.0/categories_rev/${year}`;
     }
 
-    console.log("API URL:", apiUrl);
+    //console.log("API URL:", apiUrl);
 
     fetch(apiUrl)
         .then(response => response.json())
@@ -93,8 +91,8 @@ function fetchChartData51() {
                 
              
             };
-            console.log("Bar Data:", barData);
-            console.log("Bar Layout:", barLayout);
+            //console.log("Bar Data:", barData);
+            //console.log("Bar Layout:", barLayout);
 
             Plotly.newPlot('graphics-output', barData, barLayout);
         })

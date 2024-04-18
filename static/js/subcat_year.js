@@ -1,5 +1,6 @@
 // Event Listener to your main function
 document.addEventListener('DOMContentLoaded', function() {
+    
     const submenu12 = document.getElementById("submenu12");
 
     submenu12.addEventListener('click', function(event) {
@@ -10,8 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to handle menu clicks
 function handleMenuClick52() {
-    console.log("handleMenuClick function called");
-
+    
     // Hide the Menu
     document.querySelector('.side-menu').style.display = 'none';
 
@@ -47,31 +47,31 @@ function handleMenuClick52() {
 
     // Event listener for type change
     document.getElementById("selectType").addEventListener("change", function() {
-        console.log("selectType change event triggered");
+        //console.log("selectType change event triggered");
         fetchChartData();
     });
 
     // Event listener for year change
     document.getElementById("yearSelect").addEventListener("change", function() {
-        console.log("yearSelect change event triggered");
+        ///console.log("yearSelect change event triggered");
         fetchChartData();
     });
 }
 
 // Function to fetch data from API and plot the chart
 function fetchChartData() {
-    console.log("fetchChartData function called");
+    //console.log("fetchChartData function called");
 
     const menuType = document.getElementById("selectType").value;
     const year = document.getElementById("yearSelect").value;
     let apiUrl;
     if (menuType === "Expense") {
-        apiUrl = `http://127.0.0.1:5000/api/v1.0/merged_df_ak_final_exp_subcat/${year}`;
+        apiUrl = `http://127.0.0.1:5000/api/v1.0/categories_exp_subcat/${year}`;
     } else if (menuType === "Revenue") {
-        apiUrl = `http://127.0.0.1:5000/api/v1.0/merged_df_ak_final_rev_subcat/${year}`;
+        apiUrl = `http://127.0.0.1:5000/api/v1.0/categories_rev_subcat/${year}`;
     }
 
-    console.log("API URL:", apiUrl);
+    //console.log("API URL:", apiUrl);
 
     fetch(apiUrl)
         .then(response => response.json())
@@ -95,8 +95,8 @@ function fetchChartData() {
                 
             };
 
-            console.log("Bar Data:", barData);
-            console.log("Bar Layout:", barLayout);
+            //console.log("Bar Data:", barData);
+            //console.log("Bar Layout:", barLayout);
 
             Plotly.newPlot('graphics-output', barData, barLayout);
         })
