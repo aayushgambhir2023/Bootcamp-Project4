@@ -74,8 +74,8 @@ function startGraph(){
     });
 
     //start bar graph info with Default options
-    let revList = [0, 0, 0, 0, 0];
-    let yearList = ["2019","2020","2021","2022","2023"];
+    let revList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    let yearList = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"];
     let traceBar = [{
         x : yearList,
         y : revList,
@@ -130,7 +130,7 @@ function generateGraphics(){
     // Start Lists
     let revList = [];
     let expList = [];
-    let yearList = ["2019","2020","2021","2022","2023"];
+    let yearList = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"];
 
     //URL for All years API
     url = "/api/program_analysis/all";
@@ -229,7 +229,7 @@ function generateGraphics(){
             }];
             //start bargraph layout
             let layoutBar2 = {
-            title: "Results - 5 Years",
+            title: "Results - Last 10 Years",
             yaxis: { 
                 ticktext: yValues2
                 }

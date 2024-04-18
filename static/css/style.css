@@ -1,10 +1,30 @@
+/************** Top image **************/
 .header-image {
   width: 100%;
   display: block;
-  padding: 10px;
-  justify-content: center;
-  scale: 85%;
-  
+  justify-content: center;  
+}
+
+/************** Home backgrounds **************/
+
+#homebgimage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: -1;
+}
+
+#homebgimage img {
+  width: 100%;
+  height: auto;
+  opacity: 0.2;
+}
+
+#homeContent {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
 }
 
 /************** NAVIGATION BAR **************/
@@ -61,17 +81,13 @@
 }
 
 .side-menu ul li ul {
-  display: none;
+  /*display: none;*/
   margin-left: 15px;
 }
 
 .side-menu ul li ul li > a {
   font-size: 20px;
   font-weight: normal; 
-}
-
-.side-menu ul li:hover ul {
-  display: block;
 }
 
 /************** API TEXT output **************/
