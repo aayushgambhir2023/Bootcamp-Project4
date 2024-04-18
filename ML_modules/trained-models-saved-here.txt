@@ -1,1 +1,0 @@
-Folder to save our trained models to be called real time during the app run.

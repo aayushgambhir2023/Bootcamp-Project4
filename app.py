@@ -30,6 +30,11 @@ statsrevenue_collectiom = db1['stats_revenue']# UPLOADED VIA PYTHON CODE
 ol_all_outliers_rev_collection = db1['OL_all_outliers_rev'] # UPLOADED VIA PYTHON CODE
 ol_all_outliers_exp_collection = db1['OL_all_outliers_exp'] # UPLOADED VIA PYTHON CODE
 collections_program = { 
+        2014: db1['pNl_program_2014'],# UPLOADED VIA PYTHON CODE
+        2015: db1['pNl_program_2015'],# UPLOADED VIA PYTHON CODE
+        2016: db1['pNl_program_2016'],# UPLOADED VIA PYTHON CODE
+        2017: db1['pNl_program_2017'],# UPLOADED VIA PYTHON CODE
+        2018: db1['pNl_program_2018'],# UPLOADED VIA PYTHON CODE
         2019: db1['pNl_program_2019'],# UPLOADED VIA PYTHON CODE
         2020: db1['pNl_program_2020'],# UPLOADED VIA PYTHON CODE
         2021: db1['pNl_program_2021'],# UPLOADED VIA PYTHON CODE
@@ -321,7 +326,7 @@ def summarize_data(year, field):
 def get_program_analysis_all():
     # Get parameters from request
 
-    yearlist = ["2019", "2020", "2021", "2022", "2023"]
+    yearlist = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"]
     program_data = []
 
     for year in yearlist:

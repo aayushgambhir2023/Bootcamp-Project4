@@ -13,10 +13,12 @@ document.addEventListener('DOMContentLoaded', function() {
         let graphicArea = d3.select("#graphics-output");
         graphicArea.html("");
 
+        graphicArea.append("label").text("Select year: ");
+        
         graphicArea.append("select")
             .attr("id", "yearSelect")
             .selectAll("option")
-            .data(["2019", "2020", "2021", "2022", "2023"])
+            .data(["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"])
             .enter()
             .append("option")
             .attr("value", d => d)
