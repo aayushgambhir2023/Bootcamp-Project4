@@ -4,6 +4,11 @@ import json
 from bson import json_util #, ObjectId
 from pymongo import MongoClient
 from scipy.stats import linregress
+import numpy as np
+import requests
+
+#Import ML Modules
+from sklearn.linear_model import LinearRegression
 
 #Create Flask App
 app = Flask(__name__, static_url_path='/static')
@@ -12,12 +17,12 @@ app = Flask(__name__, static_url_path='/static')
 client1 = MongoClient('mongodb+srv://city_toronto:project3@cluster0.gt72z8e.mongodb.net/')
 db1 = client1['city_toronto']
 
-client2 = MongoClient('mongodb+srv://catdb:projectboot@catdbcluster.n7tfznu.mongodb.net/')
-db2 = client2['cat_db']
-
 # Set Collections
-collection1_ak = db2['expense'] #UPLOADED MANUALLY
-collection2_ak = db2['revenue'] #UPLOADED MANUALLY
+collection1_ak = db1['expense'] #UPLOADED MANUALLY
+collection2_ak = db1['revenue'] #UPLOADED MANUALLY
+collection3_ak = db1['total_year'] #UPLOADED MANUALLY
+collection4_ak = db1['expense_sub_cat'] #UPLOADED MANUALLY
+collection5_ak = db1['revenue_sub_cat'] #UPLOADED MANUALLY
 wards_collection = db1["city_wards_data"] #UPLOADED MANUALLY
 demographic_collection = db1["demographic_data"] #UPLOADED MANUALLY
 statsexpense_collectiom = db1['stats_expenses']# UPLOADED VIA PYTHON CODE
@@ -41,35 +46,19 @@ def welcome():
 #============================HomePage End===============================
 
 #============================Categories Start===============================
-@app.route('/api/v1.0/categories_exp/<int:year>', methods=['GET'])
-def display_data_by_year_exp_ak(year):
+## API to display all revenue data
+@app.route('/api/v1.0/categories_rev', methods=['GET'])
+def display_data_rev_ak():
     # Fetch data from MongoDB
-    data = list(collection1_ak.find())
+    data = list(collection2_ak.find())
     
     # Convert ObjectId to string in each document
     for item in data:
         item['_id'] = str(item['_id'])
     
-    # Filter data by year
-    year_data = []
-    total_expense_year = 0  # Initialize total expense for the year
-    
-    for item in data:
-        for key, value in item.items():
-            if key.startswith("Expense") and key.endswith(f"{year}(millions)"):
-                total_expense_year += value  # Add expense to total for the year
+    return jsonify(data)
 
-    # Calculate percentage share for each category
-    for item in data:
-        for key, value in item.items():
-            if key.startswith("Expense") and key.endswith(f"{year}(millions)"):
-                category_name = item["Category Name"]
-                expense = value
-                percentage_share = (expense / total_expense_year) * 100 if total_expense_year != 0 else 0
-                year_data.append({"Category Name": category_name, "Expense": expense, "Share": percentage_share})
-    
-    return jsonify(year_data)
-
+## API to display all revenue data year wise, running a loop to make dynamic
 @app.route('/api/v1.0/categories_rev/<int:year>', methods=['GET'])
 def display_data_by_year_rev_ak(year):
     # Fetch data from MongoDB
@@ -98,10 +87,134 @@ def display_data_by_year_rev_ak(year):
                 year_data.append({"Category Name": category_name, "Revenue": revenue, "Share": percentage_share})
     
     return jsonify(year_data)    
+
+## API to display all expense data
+@app.route('/api/v1.0/categories_exp', methods=['GET'])
+def display_data_exp_ak():
+    # Fetch data from MongoDB
+    data = list(collection1_ak.find())
+    
+    # Convert ObjectId to string in each document
+    for item in data:
+        item['_id'] = str(item['_id'])
+    
+    return jsonify(data)
+
+## API to display all expense data year wise, running a loop to make dynamic
+
+@app.route('/api/v1.0/categories_exp/<int:year>', methods=['GET'])
+def display_data_by_year_exp_ak(year):
+    # Fetch data from MongoDB
+    data = list(collection1_ak.find())
+    
+    # Convert ObjectId to string in each document
+    for item in data:
+        item['_id'] = str(item['_id'])
+    
+    # Filter data by year
+    year_data = []
+    total_expense_year = 0  # Initialize total expense for the year
+    
+    for item in data:
+        for key, value in item.items():
+            if key.startswith("Expense") and key.endswith(f"{year}(millions)"):
+                total_expense_year += value  # Add expense to total for the year
+
+    # Calculate percentage share for each category
+    for item in data:
+        for key, value in item.items():
+            if key.startswith("Expense") and key.endswith(f"{year}(millions)"):
+                category_name = item["Category Name"]
+                expense = value
+                percentage_share = (expense / total_expense_year) * 100 if total_expense_year != 0 else 0
+                year_data.append({"Category Name": category_name, "Expense": expense, "Share": percentage_share})
+    
+    return jsonify(year_data)  
 #============================Categories End===============================
 
 #============================SubCat Start===============================
-   
+@app.route('/api/v1.0/categories_exp_subcat', methods=['GET'])
+def display_data_exp_subcat_ak():
+    # Fetch data from MongoDB
+    data = list(collection4_ak.find())
+    
+    # Convert ObjectId to string in each document
+    for item in data:
+        item['_id'] = str(item['_id'])
+    
+    return jsonify(data)
+
+## API to display all sub category expense data year wise, running a loop to make dynamic
+@app.route('/api/v1.0/categories_exp_subcat/<int:year>', methods=['GET'])
+def display_data_by_year_exp_sub_cat_ak(year):
+    # Fetch data from MongoDB
+    data = list(collection4_ak.find())
+    
+    # Convert ObjectId to string in each document
+    for item in data:
+        item['_id'] = str(item['_id'])
+    
+    # Filter data by year
+    sub_cat_year_data = []
+    total_sub_cat_expense_year = 0  # Initialize total expense for the year
+    
+    for item in data:
+        for key, value in item.items():
+            if key.startswith("Sub Expense") and key.endswith(f"{year}(millions)"):
+                total_sub_cat_expense_year += value  # Add expense to total for the year
+
+    # Calculate percentage share for each category
+    for item in data:
+        for key, value in item.items():
+            if key.startswith("Sub Expense") and key.endswith(f"{year}(millions)"):
+                sub_category_name = item["Sub-Category Name"]
+                expense = value
+                percentage_share = (expense / total_sub_cat_expense_year) * 100 if total_sub_cat_expense_year != 0 else 0
+                sub_cat_year_data.append({"Sub-Category Name": sub_category_name, "Sub Expense": expense, "Share": percentage_share})
+    
+    return jsonify(sub_cat_year_data)
+
+@app.route('/api/v1.0/categories_rev_subcat', methods=['GET'])
+def display_data_rev_subcat_ak():
+    # Fetch data from MongoDB
+    data = list(collection5_ak.find())
+    
+    # Convert ObjectId to string in each document
+    for item in data:
+        item['_id'] = str(item['_id'])
+    
+    return jsonify(data)
+
+
+## API to display all sub category revenue data year wise, running a loop to make dynamic
+@app.route('/api/v1.0/categories_rev_subcat/<int:year>', methods=['GET'])
+def display_data_by_year_rev_sub_cat_ak(year):
+    # Fetch data from MongoDB
+    data = list(collection5_ak.find())
+    
+    # Convert ObjectId to string in each document
+    for item in data:
+        item['_id'] = str(item['_id'])
+    
+    # Filter data by year
+    sub_cat_year_data_rev = []
+    total_sub_cat_revenue_year = 0  # Initialize total expense for the year
+    
+    for item in data:
+        for key, value in item.items():
+            if key.startswith("Sub Revenue") and key.endswith(f"{year}(millions)"):
+                total_sub_cat_revenue_year += value  # Add expense to total for the year
+
+    # Calculate percentage share for each category
+    for item in data:
+        for key, value in item.items():
+            if key.startswith("Sub Revenue") and key.endswith(f"{year}(millions)"):
+                category_name = item["Sub-Category Name"]
+                revenue = value
+                percentage_share = (revenue / total_sub_cat_revenue_year) * 100 if total_sub_cat_revenue_year != 0 else 0
+                sub_cat_year_data_rev.append({"Sub-Category Name": category_name, "Sub Revenue": revenue, "Share": percentage_share})
+    
+    return jsonify(sub_cat_year_data_rev)       
 #============================SubCat End===============================
 
 #============================EDA Start===============================
@@ -275,14 +388,104 @@ def graph_data():
     return jsonify(response_data)
 #============================Demographic Data End===============================
 
-#============================ML Categories Start===============================
-#============================ML Categories End===============================
+#============================ML Forecasting Categories Start===============================
+#Anuradha's ML Code
+## Linear regression for five years all categories
+API_ENDPOINT_exp = "http://127.0.0.1:5000/api/v1.0/categories_exp"
 
-#============================ML Programs Start===============================
-#============================ML Programs End===============================
+@app.route('/api/v1.0/linear_regression_exp', methods=['GET'])
+def linear_regression_exp_ak():
+    try:
+        categories = {}
+        
+        # Fetch data from API
+        response = requests.get(API_ENDPOINT_exp)
+        if response.status_code != 200:
+            return jsonify({"error": "Failed to fetch data from API"}), 500
+        
+        data = response.json()
+        
+        # Aggregate expenses for each category
+        for item in data:
+            category_name = item["Category Name"]
+            for key, value in item.items():
+                if key.startswith("Expense"):
+                    year = key.split()[1].split('(')[0]
+                    if category_name not in categories:
+                        categories[category_name] = {"expenses": {year: value}}
+                    else:
+                        categories[category_name]["expenses"][year] = value
+        
+        # Perform linear regression for each category
+        for category, category_data in categories.items():
+            years = list(map(int, category_data["expenses"].keys()))
+            expenses = list(category_data["expenses"].values())
+            expenses_array = np.array(expenses).reshape(-1, 1)  # Reshape expenses for sklearn
+            model = LinearRegression().fit(np.array(years).reshape(-1, 1), expenses_array)  # Fit linear regression model
+            category_data["slope"] = model.coef_[0][0]  # Slope of the linear regression line
+            category_data["intercept"] = model.intercept_[0]  # Intercept of the linear regression line
+        
+        return jsonify(categories)
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"error": "An error occurred while processing the request"}), 500
+    
+## Linear regression for five years all categories
+API_ENDPOINT_rev = "http://127.0.0.1:5000/api/v1.0/categories_rev"
 
-#============================ML Demographics Start===============================
-#============================ML Demographics End===============================
+@app.route('/api/v1.0/linear_regression_rev', methods=['GET'])
+def linear_regression_rev_ak():
+    try:
+        categories = {}
+        
+        # Fetch data from API
+        response = requests.get(API_ENDPOINT_rev)
+        if response.status_code != 200:
+            return jsonify({"error": "Failed to fetch data from API"}), 500
+        
+        data = response.json()
+        
+        # Aggregate expenses for each category
+        for item in data:
+            category_name = item["Category Name"]
+            for key, value in item.items():
+                if key.startswith("Revenue"):
+                    year = key.split()[1].split('(')[0]
+                    if category_name not in categories:
+                        categories[category_name] = {"revenues": {year: value}}
+                    else:
+                        categories[category_name]["revenues"][year] = value
+        
+        # Perform linear regression for each category
+        for category, category_data in categories.items():
+            years = list(map(int, category_data["revenues"].keys()))
+            expenses = list(category_data["revenues"].values())
+            revenues_array = np.array(expenses).reshape(-1, 1)  # Reshape revenues for sklearn
+            model = LinearRegression().fit(np.array(years).reshape(-1, 1), revenues_array)  # Fit linear regression model
+            category_data["slope"] = model.coef_[0][0]  # Slope of the linear regression line
+            category_data["intercept"] = model.intercept_[0]  # Intercept of the linear regression line
+        
+        return jsonify(categories)
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"error": "An error occurred while processing the request"}), 500
+#============================ML Forecasting Categories End===============================
+
+#============================ML Clustering Categories Start===============================
+#Muskan's ML Code
+#============================ML Clustering Categories End===============================
+
+#============================ML Forecasting Programs Start===============================
+#Aayush's ML Code
+#============================ML Forecasting Programs End===============================
+
+#============================ML Clustering Programs Start===============================
+#Lucas's ML Code
+#============================ML Clustering Programs End===============================
+
+#============================ML Clustering Demographics Start===============================
+#Jason's Supercode
+#============================ML Clustering Demographics End===============================
 
 ############################# OTHER APIs  ###############################
 

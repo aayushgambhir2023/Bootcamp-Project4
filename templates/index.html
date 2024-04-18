@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" />
 </head>
 <body>
-    <img src="https://github.com/aayushgambhir2023/Bootcamp-Project3/blob/Lucas/templates/imagess/torhead.jpeg?raw=true" alt="Header Image" class="header-image">
+    <img src="https://github.com/aayushgambhir2023/Bootcamp-Project4/blob/main/templates/images/bg.jpg?raw=true" alt="Header Image" class="header-image">
     
     <nav class="navigation">
         <ul>
@@ -47,6 +47,16 @@
             <li>
                 <a href="#" id="subMenu3">Demographics Data</a>
             </li>
+            <li>
+                <a href="#" id="subMenu4">Predictive Modeling (AI)</a>
+                <ul>
+                    <li><a href="#" id="submenu41">Forecasting by Category</a></li>
+                    <li><a href="#" id="submenu42">Forecasting by Program</a></li>
+                    <li><a href="#" id="submenu43">Clustering by Category</a></li>
+                    <li><a href="#" id="submenu44">Clustering by Program</a></li>
+                    <li><a href="#" id="submenu44">Clustering by Demographics</a></li>
+                </ul>
+            </li>
         </ul>
     </aside>
 
@@ -58,25 +68,28 @@
         <div id="APIcontent">
             <h2>Our API and their respective links.</h2>
             <ul>
-                <li><a href="/api/v1.0/merged_df_ak_final_exp" target="_blank">merged_df_ak_final_exp</a></li>
-                <li><a href="/api/v1.0/merged_df_ak_final_exp/<int:year>" target="_blank">merged_df_ak_final_exp/ (Takes input = year)<int:year></a></li>
-                <li><a href="/api/v1.0/expense_data" target="_blank">expense_data</a></li>
-                <li><a href="/api/v1.0/linear_regression_exp" target="_blank">linear_regression_exp</a></li>
-                <li><a href="/api/v1.0/merged_df_ak_final_rev" target="_blank">merged_df_ak_final_rev</a></li>
-                <li><a href="/api/v1.0/merged_df_ak_final_rev/<int:year>" target="_blank">merged_df_ak_final_rev/ (Takes input = year)<int:year></a></li>
-                <li><a href="/api/v1.0/revenue_data" target="_blank">revenue_data</a></li>
-                <li><a href="/api/v1.0/linear_regression_rev" target="_blank">linear_regression_rev</a></li>
-                <li><a href="/api/v1.0/dasboard_ak" target="_blank">dasboard_ak</a></li>
-                <li><a href="/api/program_analysis/<year>" target="_blank">/api/program_analysis/ (Takes input = year)<year></a></li>
-                <li><a href="/api/v1.0/city_wards_geo" target="_blank">city_wards_geo</a></li>
-                <li><a href="/api/v1.0/demographic_data_2022_budget" target="_blank">demographic_data_2022_budget</a></li>
-                <li><a href="/api/v1.0/demographic_graph_data" target="_blank">demographic_graph_data</a></li>
-                <li><a href="/api/v1.0/new_statsrev/<int:year>" target="_blank">new_statsrev/ (Takes input = year)<int:year></a></li>
-                <li><a href="/api/v1.0/revenue_data_mm" target="_blank">revenue_data_mm</a></li>
-                <li><a href="/api/v1.0/expense_data_mm" target="_blank">expense_data_mm</a></li>
-                <li><a href="/api/v1.0/summarized_revenue_data/<int:year>" target="_blank">summarized_revenue_data/<int:year></a></li>
-                <li><a href="/api/v1.0/summarized_expense_data/<int:year>" target="_blank">summarized_expense_data/<int:year></a></li>
-                <li><a href="/api/v1.0/summarized_profit_data/<int:year>" target="_blank">ssummarized_profit_data/<int:year></a></li>
+                <li><a href="/api/v1.0/categories_rev" target="_blank">Revenue by Category</a></li>
+                <li><a href="/api/v1.0/categories_rev/<int:year>" target="_blank">Revenue by Category By Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/categories_exp" target="_blank">Expenses by Category</a></li>
+                <li><a href="/api/v1.0/categories_exp/<int:year>" target="_blank">Expenses by Category By Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/categories_exp_subcat" target="_blank">Revenue by Subcategory</a></li>
+                <li><a href="/api/v1.0/categories_exp_subcat/<int:year>" target="_blank">Revenue by Subcategory By Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/categories_rev_subcat" target="_blank">Expenses by Subcategory</a></li>
+                <li><a href="/api/v1.0/categories_rev_subcat/<int:year>" target="_blank">Expenses by Subcategory By Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/statsexp" target="_blank">Expenses EDA Analysis Data</a></li>
+                <li><a href="/api/v1.0/statsrev" target="_blank">Revenue EDA Analysis Data</a></li>
+                <li><a href="/api/v1.0/revenue_data_mm" target="_blank">Revenue Outliers Data</a></li>
+                <li><a href="/api/v1.0/expense_data_mm" target="_blank">Expenses Outliers Data</a></li>
+                <li><a href="/api/program_analysis/<year>" target="_blank">Budget by Program by Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/summarized_revenue_data/<int:year>" target="_blank">Revenue only by Program by Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/summarized_expense_data/<int:year>" target="_blank">Expense only by Program by Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/summarized_profit_data/<int:year>" target="_blank">Profit only by Program by Year (takes var: /<year>)</a></li>
+                <li><a href="/api/program_analysis/all/" target="_blank">Budget by Program - all years combined</a></li>
+                <li><a href="/api/v1.0/city_wards_geo" target="_blank">City Wards Data</a></li>
+                <li><a href="/api/v1.0/demographic_data_2022_budget" target="_blank">Demographic Data (2022)</a></li>
+                <li><a href="/api/v1.0/demographic_graph_data" target="_blank">Demographic Data (Graph frindly)</a></li>
+                <li><a href="/api/v1.0/linear_regression_exp" target="_blank">A.I. Model Result Data - Categories Expenses</a></li>
+                <li><a href="/api/v1.0/linear_regression_rev" target="_blank">A.I. Model Result Data - Categories Revenue</a></li>                
             </ul>
         </div>
         <div id="aboutContent">
