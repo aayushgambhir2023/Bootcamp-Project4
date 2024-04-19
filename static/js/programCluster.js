@@ -35,7 +35,8 @@ function startGraph(){
     .style("font-family", "Arial, sans-serif")
     .style("text-align", "center");
 
-    let h3Text = introArea.append("H3").text("Select the number of Clusters and year to apply into the trained module. The options of cluster numbers have been defined analysing the inertia curves of 11 clusters for all years")
+    let h3Text = introArea.append("H3")
+    .html("The module is trained based on each program's revenue, expenses, and results amount for each year separately. Select the number of Clusters and year to apply into the trained module.<br>The options of cluster numbers have been defined by analyzing the inertia curves of 11 clusters for all years (each line = a year 2014 - 2023).")
     .style("font-family", "Arial, sans-serif")
     .style("text-align", "center");
 
@@ -56,11 +57,11 @@ function startGraph(){
     });
     
     //Create Divs for grph and Dropr menus + summary:
-    outputArea.append("div").attr("id", "graphArea").style("width", "100%");;
+    outputArea.append("div").attr("id", "graphArea").style("display", "flex").style("width", "100%");;
     let graphArea = d3.select("#graphArea");
 
-    graphArea.append("div").attr("id", "leftColumn").style("width", "20%");
-    graphArea.append("div").attr("id", "rightColumn").style("width", "80%");
+    graphArea.append("div").attr("id", "leftColumn").style("width", "20%").style("flex", "1");
+    graphArea.append("div").attr("id", "rightColumn").style("width", "80%").style("flex", "4");
 
     //Select Divs
     let leftColumn = d3.select("#leftColumn");
@@ -108,7 +109,7 @@ function startGraph(){
     })
     .on("click", generateGraphics);
 
-    //create Div for summary graph
+    //create Div for inertia graph
     leftColumn.append("div")
     .attr("id", "leftColumn2")
     .style("height", "80%")
@@ -132,107 +133,57 @@ function generateGraphics(){
     //Loop through all items(years) of the json
     getJson(api_url).then(function(data){
 
-        console.log(data);
+        // Load inertia graph
+        let inertiaImageArea = d3.select("#leftColumn2");
+        inertiaImageArea.html('');
+        inertiaImageArea.append("img").attr("src", `https://github.com/aayushgambhir2023/Bootcamp-Project4/blob/Lucas/ML_modules/programs_cluster/inertias/elbow_${year}_plot.png?raw=true`)
+        .style("width", "100%");
 
-        // for (let yearloop = 0; yearloop < yearList.length; yearloop++){
-        //     datayear = data[yearloop];
-        //     //Search the slected program for the values
-        //     for (let progloop = 0; progloop < datayear.length; progloop++){
-        //         if(datayear[progloop].Program == prog){
-        //             revList[yearloop] = datayear[progloop].rev
-        //             expList[yearloop] = datayear[progloop].exp
-        //         }
-        //     }
-        // }
+        let progNames = data.map(item => item.Program);
+        let progRevs = data.map(item => item.rev);
+        let progExps = data.map(item => item.exp);
+        let progClusters = data.map(item => item.cluster);
 
-        // //Start Line Graph Values
-        // let yValues = []
-        // let mcolor = "rgba(50, 171, 96, 0.6)";
-        // let lcolor = "rgba(50, 171, 96, 1.0)";
-    
-        // //Set type (rev or Expenses) determ. list and color
-        // if(revexp == "Revenue"){
-        //     yValues = revList;
-        // }else{
-        //     yValues = expList;
-        //     mcolor = "rgba(255, 99, 71, 0.6)";
-        //     lcolor = "rgba(255, 99, 71, 1.0)";
-        // }
+        console.log(progNames)
+        //Start Line Graph Values
+        // Graph info
+        let traceLine = [{
+            x: progExps,
+            y: progRevs,
+            xaxis: {
+                title: "Expenses",
+                tickmode: "array", 
+            },
+            yaxis: {
+                title: "Revenue",
+                zeroline: false 
+            },
+            mode: 'markers',
+            marker: {
+              size: 10,
+              color: progClusters
+            },
+            text: progNames
+          }];
 
-        // // Line graph infos
-        // let traceLine = [{
-        //     x: yearList,
-        //     y: yValues,
-        //     text: yValues.map(value => '$' + value.toLocaleString()),
-        //     type: "scatter",
-        //     mode: "lines",
-        //     hoverinfo: "text",
-        //     line: {
-        //         color: mcolor,
-        //         width: 5, 
-        //         shape: "spline", // ChatGPT part for curvy line
-        //     },
-        //     fill: "tozeroy" // ChatGPT part for filling area underneath the line
-        // }];
+        // Graph Layout
+        let layoutLine = {
+            title: "Clusters of Programs in " + year,
 
-        // // Line graph layout
-        // let layoutLine = {
-        //     title: "Yearly " + revexp + ": " + prog,
-        //     xaxis: {
-        //         title: "Year",
-        //         tickmode: "array", 
-        //         tickvals: yearList 
-        //     },
-        //     yaxis: {
-        //         title: "Revenue (CAD)",
-        //         zeroline: false 
-        //     },
-        //     plot_bgcolor: "#f7f7f7",
-        //     paper_bgcolor: "#f7f7f7",
-        //     margin: {
-        //         t: 50,
-        //         l: 50,
-        //         r: 50,
-        //         b: 50
-        //     }
-        // };
+            plot_bgcolor: "#f7f7f7",
+            paper_bgcolor: "#f7f7f7",
+            margin: {
+                t: 50,
+                l: 50,
+                r: 50,
+                b: 50
+            },
+            width: 1555,
+            height: 500
+        };
 
-        // // Plot line graph
-        // Plotly.newPlot("rightColumn", traceLine, layoutLine);
-
-        // // Calculate total amounts for Summary Graph
-        // let totalRev = 0;
-        // let totalExp = 0;
-
-        // for (let totloop = 0; totloop < revList.length; totloop++){
-        //     totalRev = totalRev + revList[totloop];
-        //     totalExp = totalExp + expList[totloop];
-        // }
-
-        // //Summary Bar Graph
-        // let xValues2 = ["Revenue", "Expenses"];
-        // let yValues2 = [totalRev, totalExp];
-        // let colors2 = ["rgba(50, 171, 96, 0.6)", "rgba(255, 99, 71, 0.6)"];
-
-        // let traceBar2 = [{
-        //     x : xValues2,
-        //     y : yValues2,
-        //     text : yValues2.map(value2 => '$' + value2.toLocaleString()),
-        //     type : "bar",
-        //     hoverinfo : "text",
-        //     marker: {
-        //         color: colors2 
-        //     }
-        //     }];
-        //     //start bargraph layout
-        //     let layoutBar2 = {
-        //     title: "Results - Last 10 Years",
-        //     yaxis: { 
-        //         ticktext: yValues2
-        //         }
-        //     };
-        //     //plot bargraph into lC2.
-        //     Plotly.newPlot("leftColumn2", traceBar2, layoutBar2);
+        // Plot line graph
+        Plotly.newPlot("rightColumn", traceLine, layoutLine);
     
     });
 

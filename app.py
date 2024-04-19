@@ -8,6 +8,7 @@ import numpy as np
 import requests
 
 #Import ML Modules
+import os
 from sklearn.linear_model import LinearRegression
 import pickle
 import pandas as pd
@@ -489,7 +490,8 @@ def linear_regression_rev_ak():
 #============================ML Clustering Programs Start===============================
 @app.route('/api/v1.0/program_cluster/<int:no_clusters>/<int:year>')
 def cluster_programs(no_clusters, year):
-    model_file_name = f"/ML_modules/programs_cluster/trained_modules/kmeans_model_c{no_clusters}_{year}.pkl"
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/programs_cluster/trained_modules/kmeans_model_c{no_clusters}_{year}.pkl")
 
     data = list(collections_program[year].find())
     
@@ -498,12 +500,19 @@ def cluster_programs(no_clusters, year):
         item['_id'] = str(item['_id'])
 
     df_init = pd.DataFrame(data)
+    program_names = df_init["Program"]
 
-    with open(model_file_name, 'rb') as file:
+    df_init.drop(columns=['_id'], inplace=True)
+    df_init.set_index('Program', inplace=True)
+    df_init.dropna(how='any', inplace=True)
+
+    with open(model_file_path, 'rb') as file:
          k_prog_model = pickle.load(file)
 
     pred_clusters = k_prog_model.predict(df_init)
+
     final_df = df_init.copy()
+    final_df["Program"] = program_names.values
     final_df["cluster"] = pred_clusters
     final_df_dict = final_df.to_dict(orient='records')
 
