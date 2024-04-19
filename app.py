@@ -9,6 +9,8 @@ import requests
 
 #Import ML Modules
 from sklearn.linear_model import LinearRegression
+import pickle
+import pandas as pd
 
 #Create Flask App
 app = Flask(__name__, static_url_path='/static')
@@ -485,7 +487,27 @@ def linear_regression_rev_ak():
 #============================ML Forecasting Programs End===============================
 
 #============================ML Clustering Programs Start===============================
-#Lucas's ML Code
+@app.route('/api/v1.0/program_cluster/<int:no_clusters>/<int:year>')
+def cluster_programs(no_clusters, year):
+    model_file_name = f"/ML_modules/programs_cluster/trained_modules/kmeans_model_c{no_clusters}_{year}.pkl"
+
+    data = list(collections_program[year].find())
+    
+    # Convert ObjectId to string in each document
+    for item in data:
+        item['_id'] = str(item['_id'])
+
+    df_init = pd.DataFrame(data)
+
+    with open(model_file_name, 'rb') as file:
+         k_prog_model = pickle.load(file)
+
+    pred_clusters = k_prog_model.predict(df_init)
+    final_df = df_init.copy()
+    final_df["cluster"] = pred_clusters
+    final_df_dict = final_df.to_dict(orient='records')
+
+    return jsonify(final_df_dict)
 #============================ML Clustering Programs End===============================
 
 #============================ML Clustering Demographics Start===============================
