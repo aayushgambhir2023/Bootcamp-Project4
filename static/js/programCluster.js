@@ -1,8 +1,8 @@
 //Select your menu ID
 let selectedMenu = "submenu44";
 
-// create getJson function to retrieve response
-function getJson(url){
+// create getJsonML function to retrieve response
+function getJsonML(url){
      return d3.json(url);
 }
 
@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', function() {
         //hide the Menu
         document.querySelector('.side-menu').style.display = 'none';
         //Call Function
-        startGraph();
+        startGraphML();
     });
 });
 
 //Initial Graph Function
-function startGraph(){
+function startGraphML(){
 
     //Select D3 Area, clear Content and adjust side-by side view
     let outputArea = d3.select("#graphics-output");
@@ -31,6 +31,7 @@ function startGraph(){
     outputArea.append("div").attr("id", "introArea").style("width", "100%");
     let introArea = d3.select("#introArea");
 
+    //Add intro Text
     introArea.append("H1").text("Clustering of City Programs Using K-means algorithm")
     .style("font-family", "Arial, sans-serif")
     .style("text-align", "center");
@@ -40,6 +41,7 @@ function startGraph(){
     .style("font-family", "Arial, sans-serif")
     .style("text-align", "center");
 
+    //Link for complete elbow graph image
     h3Text.append("a")
     .text("See graph")
     .attr("target", "_blank")
@@ -74,6 +76,7 @@ function startGraph(){
 
     menuNoClusters.append("option").attr("value", "2").text("2 Clusters");
     menuNoClusters.append("option").attr("value", "3").text("3 Clusters");
+    menuNoClusters.append("option").attr("value", "4").text("4 Clusters");
 
     //Add DropDown for Year Selection
     let menuYear = leftColumn.append("select").attr("id", "ddYear")
@@ -107,7 +110,7 @@ function startGraph(){
     .on("mouseout", function() {
         d3.select(this).style("background-color", "#007BFF");
     })
-    .on("click", generateGraphics);
+    .on("click", generateGraphicML);
 
     //create Div for inertia graph
     leftColumn.append("div")
@@ -118,7 +121,7 @@ function startGraph(){
 }
 
 //Function to update graphics
-function generateGraphics(){
+function generateGraphicML(){
 
     //Select page elements
     let menuNoClusters = d3.select("#ddClusters");
@@ -131,7 +134,7 @@ function generateGraphics(){
     api_url = "/api/v1.0/program_cluster/" + noClusters + "/" + year;
 
     //Loop through all items(years) of the json
-    getJson(api_url).then(function(data){
+    getJsonML(api_url).then(function(data){
 
         // Load inertia graph
         let inertiaImageArea = d3.select("#leftColumn2");
@@ -144,7 +147,6 @@ function generateGraphics(){
         let progExps = data.map(item => item.exp);
         let progClusters = data.map(item => item.cluster);
 
-        console.log(progNames)
         //Start Line Graph Values
         // Graph info
         let traceLine = [{
@@ -160,10 +162,12 @@ function generateGraphics(){
             },
             mode: 'markers',
             marker: {
-              size: 10,
+              size: 13,
               color: progClusters
             },
-            text: progNames
+            text: progNames,
+            hovertemplate: '%{text}<br>Revenue: %{y}<br>Expenses: %{x}<br>Cluster: %{marker.color}',
+            name: ''
           }];
 
         // Graph Layout
@@ -179,7 +183,15 @@ function generateGraphics(){
                 b: 50
             },
             width: 1555,
-            height: 500
+            height: 500,
+            xaxis: {
+                showticklabels: false,
+                title: "Expenses"
+            },
+            yaxis: {
+                showticklabels: false,
+                title: "Revenue"
+            }
         };
 
         // Plot line graph

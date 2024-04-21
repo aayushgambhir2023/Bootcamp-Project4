@@ -208,8 +208,12 @@ function generateGraphics(){
         let totalExp = 0;
 
         for (let totloop = 0; totloop < revList.length; totloop++){
-            totalRev = totalRev + revList[totloop];
-            totalExp = totalExp + expList[totloop];
+            if (revList[totloop]) {
+                totalRev += revList[totloop];
+            }
+            if (expList[totloop]) {
+                totalExp += expList[totloop];
+            }
         }
 
         //Summary Bar Graph

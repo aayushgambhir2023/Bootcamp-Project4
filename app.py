@@ -499,18 +499,25 @@ def cluster_programs(no_clusters, year):
     for item in data:
         item['_id'] = str(item['_id'])
 
+    # Create an initial DF with the original Data
     df_init = pd.DataFrame(data)
     program_names = df_init["Program"]
 
+    #Edit DF to acoomodate to Module format
     df_init.drop(columns=['_id'], inplace=True)
     df_init.set_index('Program', inplace=True)
     df_init.dropna(how='any', inplace=True)
 
+    # Open sel model >>> Predict
     with open(model_file_path, 'rb') as file:
          k_prog_model = pickle.load(file)
 
     pred_clusters = k_prog_model.predict(df_init)
 
+    # Add 1 to each cluster to avoid cluster 0:.
+    pred_clusters = pred_clusters + 1
+
+    # Create final DF and include output info.
     final_df = df_init.copy()
     final_df["Program"] = program_names.values
     final_df["cluster"] = pred_clusters
