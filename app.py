@@ -615,7 +615,9 @@ def rev_actual_vs_predicted_poly_regress_ak(start_year, end_year):
 @app.route('/api/v1.0/linear_regress_exp/actual_vs_predicted/static', methods=['GET'])
 def exp_actual_vs_predicted_linear_regress_static():
     # Load the trained model
-    with open('ML_modules/category_forecast/trained_models/linear_regression_model.pkl', 'rb') as f:
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path_1_1 = os.path.join(app_file_directory, f"ML_modules/category_forecast/trained_models/linear_regression_model.pkl")
+    with open(model_file_path_1_1, 'rb') as f:
         model = pickle.load(f)
 
     # Define years range
@@ -655,7 +657,9 @@ def exp_actual_vs_predicted_linear_regress_static():
 @app.route('/api/v1.0/poly_regress_exp/actual_vs_predicted/static', methods=['GET'])
 def exp_actual_vs_predicted_poly_regress_static():
     # Load the trained model
-    with open('ML_modules/category_forecast/trained_models/polynomial_regression_model.pkl', 'rb') as f:
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path_2_2 = os.path.join(app_file_directory, f"ML_modules/category_forecast/trained_models/polynomial_regression_model.pkl")
+    with open(model_file_path_2_2, 'rb') as f:
         model = pickle.load(f)
 
     # Define years range
@@ -693,7 +697,9 @@ def exp_actual_vs_predicted_poly_regress_static():
 @app.route('/api/v1.0/linear_regress_rev/actual_vs_predicted/static', methods=['GET'])
 def rev_actual_vs_predicted_linear_regress_static():
     # Load the trained model
-    with open('ML_modules/category_forecast/trained_models/linear_regression_model_rev.pkl', 'rb') as f:
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path_3_3 = os.path.join(app_file_directory, f"ML_modules/category_forecast/trained_models/linear_regression_model_rev.pkl")
+    with open(model_file_path_3_3, 'rb') as f:
         model = pickle.load(f)
 
     # Define years range
@@ -730,7 +736,9 @@ def rev_actual_vs_predicted_linear_regress_static():
 @app.route('/api/v1.0/poly_regress_rev/actual_vs_predicted/static', methods=['GET'])
 def rev_actual_vs_predicted_poly_regress_static():
     # Load the trained model
-    with open('ML_modules/category_forecast/trained_models/polynomial_regression_model_rev.pkl', 'rb') as f:
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path_4_4 = os.path.join(app_file_directory, f"ML_modules/category_forecast/trained_models/polynomial_regression_model_rev.pkl")
+    with open(model_file_path_4_4, 'rb') as f:
         model = pickle.load(f)
 
     # Define years range
