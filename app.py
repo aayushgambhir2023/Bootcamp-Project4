@@ -26,6 +26,8 @@ collection2_ak = db1['revenue'] #UPLOADED MANUALLY
 collection3_ak = db1['total_year'] #UPLOADED MANUALLY
 collection4_ak = db1['expense_sub_cat'] #UPLOADED MANUALLY
 collection5_ak = db1['revenue_sub_cat'] #UPLOADED MANUALLY
+collection6_ak = db1['cat_expense_year_total_2014_2023'] #UPLOADED VIA PYTHON CODE
+collection7_ak =  db1['cat_revenue_year_total_2014_2023'] #UPLOADED VIA PYTHON CODE
 wards_collection = db1["city_wards_data"] #UPLOADED MANUALLY
 demographic_collection = db1["demographic_data"] #UPLOADED MANUALLY
 statsexpense_collectiom = db1['stats_expenses']# UPLOADED VIA PYTHON CODE
@@ -477,6 +479,292 @@ def linear_regression_rev_ak():
     except Exception as e:
         print("Error:", e)
         return jsonify({"error": "An error occurred while processing the request"}), 500
+    
+#--------------------------------------------
+
+#API for Actual Vs Predictions for Category-Expense 2014-2023 and forecasts therefater-----API_1
+# Route to get actual and predicted values for each year-LINEAR REGRESSION
+@app.route('/api/v1.0/linear_regress/actual_vs_predicted/<int:start_year>/<int:end_year>', methods=['GET'])
+def exp_actual_vs_predicted_linear_regress_ak(start_year, end_year):
+    # Load the trained model
+    with open('ML_modules/category_forecast/trained_models/linear_regression_model.pkl', 'rb') as f:
+        model = pickle.load(f)
+
+    # Prepare data for the specified range of years
+    years = list(range(start_year, end_year + 1))
+    actual_values = []
+    predicted_values = []
+
+    response = {}
+    for year in years:
+        # Retrieve actual expense from MongoDB collection
+        document = collection6_ak.find_one({'Year': year})
+        if document and 'Total' in document:
+            actual_expense = document['Total']
+            actual_values.append(actual_expense)
+            predicted_value = model.predict([[year]])[0]
+            predicted_values.append(predicted_value)
+            response[year] = {'Actual': actual_expense, 'Prediction': predicted_value}
+        else:
+            predicted_value = model.predict([[year]])[0]
+            response[year] = {'Prediction': predicted_value}
+
+    # Prepare response
+
+    return jsonify(response)
+
+#--------------------------------------------
+#API for Actual Vs Predictions for Category-Expense 2014-2023 and forecasts therefater-----API_2
+# Route to get actual and predicted values for each year-polynomial REGRESSION
+@app.route('/api/v1.0/poly_regress/actual_vs_predicted/<int:start_year>/<int:end_year>', methods=['GET'])
+def exp_actual_vs_predicted_poly_regress_ak(start_year, end_year):
+    # Load the trained model
+    with open('ML_modules/category_forecast/trained_models/polynomial_regression_model.pkl', 'rb') as f:
+        model = pickle.load(f)
+
+    # Prepare data for the specified range of years
+    years = list(range(start_year, end_year + 1))
+    actual_values = []
+    predicted_values = []
+
+    response = {}
+    for year in years:
+        # Retrieve actual expense from MongoDB collection
+        document = collection6_ak.find_one({'Year': year})
+        if document and 'Total' in document:
+            actual_expense = document['Total']
+            actual_values.append(actual_expense)
+            predicted_value = model.predict([[year]])[0]
+            predicted_values.append(predicted_value)
+            response[year] = {'Actual': actual_expense, 'Prediction': predicted_value}
+        else:
+            predicted_value = model.predict([[year]])[0]
+            response[year] = {'Prediction': predicted_value}
+
+    # Prepare response
+
+    return jsonify(response)
+
+#--------------------------------------------
+
+#API for Actual Vs Predictions for Category-Revenue 2014-2023 and forecasts therefater------API_3
+# Route to get actual and predicted values for each year-LINEAR REGRESSION
+@app.route('/api/v1.0/linear_regress_rev/actual_vs_predicted/<int:start_year>/<int:end_year>', methods=['GET'])
+def rev_actual_vs_predicted_linear_regress_ak(start_year, end_year):
+    # Load the trained model
+    with open('ML_modules/category_forecast/trained_models/linear_regression_model_rev.pkl', 'rb') as f:
+        model = pickle.load(f)
+
+    # Prepare data for the specified range of years
+    years = list(range(start_year, end_year + 1))
+    actual_values = []
+    predicted_values = []
+
+    response = {}
+    for year in years:
+        # Retrieve actual expense from MongoDB collection
+        document = collection7_ak.find_one({'Year': year})
+        if document and 'Total' in document:
+            actual_revenue = document['Total']
+            actual_values.append(actual_revenue)
+            predicted_value = model.predict([[year]])[0]
+            predicted_values.append(predicted_value)
+            response[year] = {'Actual': actual_revenue, 'Prediction': predicted_value}
+        else:
+            predicted_value = model.predict([[year]])[0]
+            response[year] = {'Prediction': predicted_value}
+
+    # Prepare response
+
+    return jsonify(response)
+
+#--------------------------------------------
+#API for Actual Vs Predictions for Category-Revenue 2014-2023 and forecasts therefater------API_4
+# Route to get actual and predicted values for each year-SVM REGRESSION
+@app.route('/api/v1.0/poly_regress_rev/actual_vs_predicted/<int:start_year>/<int:end_year>', methods=['GET'])
+def rev_actual_vs_predicted_poly_regress_ak(start_year, end_year):
+    # Load the trained model
+    with open('ML_modules/category_forecast/trained_models/polynomial_regression_model_rev.pkl', 'rb') as f:
+        model = pickle.load(f)
+
+    # Prepare data for the specified range of years
+    years = list(range(start_year, end_year + 1))
+    response = {}
+
+    for year in years:
+        # Retrieve actual expense from MongoDB collection
+        document = collection7_ak.find_one({'Year': year})
+        if document and 'Total' in document:
+            actual_revenue = document['Total']
+            # Reshape the input to have two dimensions
+            year_input = np.array([[year]])
+            predicted_value = model.predict(year_input)[0]
+            response[year] = {'Actual': actual_revenue, 'Prediction': predicted_value}
+        else:
+            # Reshape the input to have two dimensions
+            year_input = np.array([[year]])
+            predicted_value = model.predict(year_input)[0]
+            response[year] = {'Prediction': predicted_value}
+
+    # Prepare response
+    return jsonify(response)
+
+
+#API for Actual Vs Predictions for Category-Expense 2014-2027 and forecasts thereafter-----API_1.1
+# Route to get actual and predicted values for each year-LINEAR REGRESSION
+@app.route('/api/v1.0/linear_regress_exp/actual_vs_predicted/static', methods=['GET'])
+def exp_actual_vs_predicted_linear_regress_static():
+    # Load the trained model
+    with open('ML_modules/category_forecast/trained_models/linear_regression_model.pkl', 'rb') as f:
+        model = pickle.load(f)
+
+    # Define years range
+    start_year = 2014
+    end_year = 2028
+
+    # Prepare data for the specified range of years
+    years = list(range(start_year, end_year + 1))
+    actual_values = []
+    predicted_values = []
+
+    response = {}
+    for year in years:
+        # Retrieve actual expense from MongoDB collection
+        document = collection6_ak.find_one({'Year': year})
+        if document and 'Total' in document:
+            actual_expense = document['Total']
+            actual_values.append(actual_expense)
+            predicted_value = model.predict([[year]])[0]
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            predicted_values.append(rounded_predicted_value)
+            response[year] = {'Actual': actual_expense, 'Prediction': rounded_predicted_value}
+        else:
+            predicted_value = model.predict([[year]])[0]
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            predicted_values.append(rounded_predicted_value)
+            response[year] = {'Prediction': rounded_predicted_value}
+
+    # Prepare response
+    return jsonify(response)
+
+
+#API for Actual Vs Predictions for Category-Expense 2014-2028 and forecasts thereafter-----API_2.2
+# Route to get actual and predicted values for each year-polynomial REGRESSION
+@app.route('/api/v1.0/poly_regress_exp/actual_vs_predicted/static', methods=['GET'])
+def exp_actual_vs_predicted_poly_regress_static():
+    # Load the trained model
+    with open('ML_modules/category_forecast/trained_models/polynomial_regression_model.pkl', 'rb') as f:
+        model = pickle.load(f)
+
+    # Define years range
+    start_year = 2014
+    end_year = 2028
+
+    # Prepare data for the specified range of years
+    years = list(range(start_year, end_year + 1))
+    actual_values = []
+    predicted_values = []
+
+    response = {}
+    for year in years:
+        # Retrieve actual expense from MongoDB collection
+        document = collection6_ak.find_one({'Year': year})
+        if document and 'Total' in document:
+            actual_expense = document['Total']
+            actual_values.append(actual_expense)
+            predicted_value = model.predict([[year]])[0]
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            predicted_values.append(rounded_predicted_value)
+            response[year] = {'Actual': actual_expense, 'Prediction': rounded_predicted_value}
+        else:
+            predicted_value = model.predict([[year]])[0]
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            response[year] = {'Prediction': rounded_predicted_value}
+
+    # Prepare response
+    return jsonify(response)
+
+#API for Actual Vs Predictions for Category-Revenue 2014-2028 and forecasts thereafter------API_3.3
+# Route to get actual and predicted values for each year-LINEAR REGRESSION
+@app.route('/api/v1.0/linear_regress_rev/actual_vs_predicted/static', methods=['GET'])
+def rev_actual_vs_predicted_linear_regress_static():
+    # Load the trained model
+    with open('ML_modules/category_forecast/trained_models/linear_regression_model_rev.pkl', 'rb') as f:
+        model = pickle.load(f)
+
+    # Define years range
+    start_year = 2014
+    end_year = 2028
+
+    # Prepare data for the specified range of years
+    years = list(range(start_year, end_year + 1))
+    actual_values = []
+    predicted_values = []
+
+    response = {}
+    for year in years:
+        # Retrieve actual revenue from MongoDB collection
+        document = collection7_ak.find_one({'Year': year})
+        if document and 'Total' in document:
+            actual_revenue = document['Total']
+            actual_values.append(actual_revenue)
+            predicted_value = model.predict([[year]])[0]
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            predicted_values.append(rounded_predicted_value)
+            response[year] = {'Actual': actual_revenue, 'Prediction': rounded_predicted_value}
+        else:
+            predicted_value = model.predict([[year]])[0]
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            response[year] = {'Prediction': rounded_predicted_value}
+    # Prepare response
+    return jsonify(response)
+
+#API for Actual Vs Predictions for Category-Revenue 2014-2028 and forecasts thereafter------API_4.4
+# Route to get actual and predicted values for each year-polynomial REGRESSION
+@app.route('/api/v1.0/poly_regress_rev/actual_vs_predicted/static', methods=['GET'])
+def rev_actual_vs_predicted_poly_regress_static():
+    # Load the trained model
+    with open('ML_modules/category_forecast/trained_models/polynomial_regression_model_rev.pkl', 'rb') as f:
+        model = pickle.load(f)
+
+    # Define years range
+    start_year = 2014
+    end_year = 2028
+
+    # Prepare data for the specified range of years
+    years = list(range(start_year, end_year + 1))
+    response = {}
+
+    for year in years:
+        # Retrieve actual revenue from MongoDB collection
+        document = collection7_ak.find_one({'Year': year})
+        if document and 'Total' in document:
+            actual_revenue = document['Total']
+            # Reshape the input to have two dimensions
+            year_input = np.array([[year]])
+            predicted_value = model.predict(year_input)[0]
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            response[year] = {'Actual': actual_revenue, 'Prediction': rounded_predicted_value}
+        else:
+            # Reshape the input to have two dimensions
+            year_input = np.array([[year]])
+            predicted_value = model.predict(year_input)[0]
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            response[year] = {'Prediction': rounded_predicted_value}
+    # Prepare response
+    return jsonify(response)
+
+
+#--------------------------------------------
+
 #============================ML Forecasting Categories End===============================
 
 #============================ML Clustering Categories Start===============================
