@@ -91,7 +91,14 @@
                 <li><a href="/api/v1.0/demographic_data_2022_budget" target="_blank">Demographic Data (2022)</a></li>
                 <li><a href="/api/v1.0/demographic_graph_data" target="_blank">Demographic Data (Graph frindly)</a></li>
                 <li><a href="/api/v1.0/linear_regression_exp" target="_blank">A.I. Model Result Data - Categories Expenses</a></li>
-                <li><a href="/api/v1.0/linear_regression_rev" target="_blank">A.I. Model Result Data - Categories Revenue</a></li>                
+                <li><a href="/api/v1.0/linear_regression_rev" target="_blank">A.I. Model Result Data - Categories Revenue</a></li>
+                <!-- <Added by Anuradha as 4 new API> -->
+                <li><a href="/api/v1.0/linear_regress/actual_vs_predicted/<int:start_year>/<int:end_year>" target="_blank">Forecasting vs Actual(Linear Regression) - Categories Expenses</a></li>
+                <li><a href="/api/v1.0/poly_regress/actual_vs_predicted/<int:start_year>/<int:end_year>" target="_blank">Forecasting vs Actual(Polynomial Regression) - Categories Expenses</a></li>  
+                <li><a href="/api/v1.0/linear_regress_rev/actual_vs_predicted/<int:start_year>/<int:end_year>" target="_blank">Forecasting vs Actual(Linear Regression) - Categories Revenue</a></li>
+                <li><a href="/api/v1.0/poly_regress_rev/actual_vs_predicted/<int:start_year>/<int:end_year>" target="_blank">Forecasting vs Actual(Polynomial Regression) - Categories Revenue</a></li>  
+                <!-- <Added by Anuradha as 4 new API> -->
+
             </ul>
             <div id="homebgimage">
                 <img src="https://tdot.com/wp-content/uploads/2020/09/New_Toronto_Sign_2020_Vers2_@mw_city_photography_web.jpg">
@@ -117,6 +124,7 @@
             </div>
         </div>
         <div id="graphics-output"></div>
+        <div id="dropdown-container"></div>   <!-- <Added by Anuradha for dropdown container> -->
     </div>
 
   

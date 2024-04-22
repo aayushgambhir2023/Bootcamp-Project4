@@ -24,8 +24,8 @@ collection2_ak = db1['revenue'] #UPLOADED MANUALLY
 collection3_ak = db1['total_year'] #UPLOADED MANUALLY
 collection4_ak = db1['expense_sub_cat'] #UPLOADED MANUALLY
 collection5_ak = db1['revenue_sub_cat'] #UPLOADED MANUALLY
-collection6_ak = db1['cat_expense_year_total_2014_2023'] #UPLOADED MANUALLY
-collection7_ak =  db1['cat_revenue_year_total_2014_2023'] #UPLOADED MANUALLY
+collection6_ak = db1['cat_expense_year_total_2014_2023'] #UPLOADED VIA PYTHON CODE
+collection7_ak =  db1['cat_revenue_year_total_2014_2023'] #UPLOADED VIA PYTHON CODE
 wards_collection = db1["city_wards_data"] #UPLOADED MANUALLY
 demographic_collection = db1["demographic_data"] #UPLOADED MANUALLY
 statsexpense_collectiom = db1['stats_expenses']# UPLOADED VIA PYTHON CODE
@@ -633,11 +633,16 @@ def exp_actual_vs_predicted_linear_regress_static():
             actual_expense = document['Total']
             actual_values.append(actual_expense)
             predicted_value = model.predict([[year]])[0]
-            predicted_values.append(predicted_value)
-            response[year] = {'Actual': actual_expense, 'Prediction': predicted_value}
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            predicted_values.append(rounded_predicted_value)
+            response[year] = {'Actual': actual_expense, 'Prediction': rounded_predicted_value}
         else:
             predicted_value = model.predict([[year]])[0]
-            response[year] = {'Prediction': predicted_value}
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            predicted_values.append(rounded_predicted_value)
+            response[year] = {'Prediction': rounded_predicted_value}
 
     # Prepare response
     return jsonify(response)
@@ -668,11 +673,15 @@ def exp_actual_vs_predicted_poly_regress_static():
             actual_expense = document['Total']
             actual_values.append(actual_expense)
             predicted_value = model.predict([[year]])[0]
-            predicted_values.append(predicted_value)
-            response[year] = {'Actual': actual_expense, 'Prediction': predicted_value}
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            predicted_values.append(rounded_predicted_value)
+            response[year] = {'Actual': actual_expense, 'Prediction': rounded_predicted_value}
         else:
             predicted_value = model.predict([[year]])[0]
-            response[year] = {'Prediction': predicted_value}
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            response[year] = {'Prediction': rounded_predicted_value}
 
     # Prepare response
     return jsonify(response)
@@ -702,12 +711,15 @@ def rev_actual_vs_predicted_linear_regress_static():
             actual_revenue = document['Total']
             actual_values.append(actual_revenue)
             predicted_value = model.predict([[year]])[0]
-            predicted_values.append(predicted_value)
-            response[year] = {'Actual': actual_revenue, 'Prediction': predicted_value}
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            predicted_values.append(rounded_predicted_value)
+            response[year] = {'Actual': actual_revenue, 'Prediction': rounded_predicted_value}
         else:
             predicted_value = model.predict([[year]])[0]
-            response[year] = {'Prediction': predicted_value}
-
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            response[year] = {'Prediction': rounded_predicted_value}
     # Prepare response
     return jsonify(response)
 
@@ -735,13 +747,16 @@ def rev_actual_vs_predicted_poly_regress_static():
             # Reshape the input to have two dimensions
             year_input = np.array([[year]])
             predicted_value = model.predict(year_input)[0]
-            response[year] = {'Actual': actual_revenue, 'Prediction': predicted_value}
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            response[year] = {'Actual': actual_revenue, 'Prediction': rounded_predicted_value}
         else:
             # Reshape the input to have two dimensions
             year_input = np.array([[year]])
             predicted_value = model.predict(year_input)[0]
-            response[year] = {'Prediction': predicted_value}
-
+            # Round off predicted value to three decimal places
+            rounded_predicted_value = round(predicted_value, 3)
+            response[year] = {'Prediction': rounded_predicted_value}
     # Prepare response
     return jsonify(response)
 
