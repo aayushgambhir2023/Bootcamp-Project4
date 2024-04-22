@@ -6,6 +6,8 @@ from pymongo import MongoClient
 from scipy.stats import linregress
 import numpy as np
 import requests
+import os
+import pickle
 
 #Import ML Modules
 from sklearn.linear_model import LinearRegression
@@ -490,6 +492,88 @@ def linear_regression_rev_ak():
 
 #============================ML Clustering Demographics Start===============================
 #Jason's Supercode
+
+def load_kmeans_model(model_file_path):
+    with open(model_file_path, 'rb') as file:
+        kmeans_model = pickle.load(file)
+    return kmeans_model
+
+# Define an endpoint for making predictions
+@app.route('/api/v1.0/predict_clusters', methods=['GET'])
+def predict_clusters():
+    # Load the pickled model
+    model_path = 'ML_modules/demographic_cluster/trained_models/K-means_clustering.pkl'  # Update this with the path to your model
+    kmeans_model = load_kmeans_model(model_path)
+
+    # Extract data from the request
+    data = request.get_json()
+
+    # Fetch demographic data from the API
+    api_url = "http://127.0.0.1:5000/api/v1.0/demographic_data_2022_budget"
+    response = requests.get(api_url)
+    if response.status_code != 200:
+        return jsonify({'error': 'Failed to fetch demographic data'})
+
+    # Preprocess data
+    data = response.json()
+    features = ['Average total income in 2020 among recipients ($)', 
+                'Median total income in 2020 among recipients ($)', 
+                '2022 Budget',
+                'Population density per square kilometre']
+    X = np.array([[row[feature] for feature in features] for row in data])
+
+    # Feature scaling/standardization
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    # Predict clusters using the loaded K-means model
+    cluster_labels = kmeans_model.predict(X_scaled)
+
+    # Add cluster labels to the data
+    for i, label in enumerate(cluster_labels):
+        data[i]['Cluster'] = label
+
+    # Return the data as JSON
+    return jsonify(data)
+
+#+++++++++++++++++++
+# def load_pickled_model(pickle_file):
+#     with open(pickle_file, 'rb') as f:
+#         model = pickle.load(f)
+#     return model
+
+# kmeans_model = load_pickled_model('ML_modules/demographic_cluster/trained_models/K-means_clustering.pkl')
+
+# @app.route('/api/kmeans_data', methods=['GET'])
+# def get_kmeans_data():
+#     # Fetch demographic data from the API
+#     api_url = "http://127.0.0.1:5000/api/v1.0/demographic_data_2022_budget"
+#     response = requests.get(api_url)
+#     if response.status_code != 200:
+#         return jsonify({'error': 'Failed to fetch demographic data'})
+
+#     # Preprocess data
+#     data = response.json()
+#     features = ['Average total income in 2020 among recipients ($)', 
+#                 'Median total income in 2020 among recipients ($)', 
+#                 '2022 Budget',
+#                 'Population density per square kilometre']
+#     X = np.array([[row[feature] for feature in features] for row in data])
+
+#     # Feature scaling/standardization
+#     scaler = StandardScaler()
+#     X_scaled = scaler.fit_transform(X)
+
+#     # Predict clusters using the loaded K-means model
+#     cluster_labels = kmeans_model.predict(X_scaled)
+
+#     # Add cluster labels to the data
+#     for i, label in enumerate(cluster_labels):
+#         data[i]['Cluster'] = label
+
+#     # Return the data as JSON
+#     return jsonify(data)
+
 #============================ML Clustering Demographics End===============================
 
 ############################# OTHER APIs  ###############################
