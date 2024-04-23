@@ -26,11 +26,6 @@ submenu45.addEventListener('click', function(event) {
     d3.select("#graphContainer").append("div")
         .attr("id", "DemoClusterGraph")
         .style("width", "65%");
-
-    graphicArea.append("div")
-    .html("Your notation here") // Add your notation content here
-    .style("width", "100%")
-    .style("text-align", "center");
     
     graphicArea.append("div")
     .attr("id","DemoAHCGraph")
