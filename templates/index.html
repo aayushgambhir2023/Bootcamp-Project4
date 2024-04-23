@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City of Toronto Budget Analisys</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script> <!-- Leaflet JS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" />
+</head>
+<body>
+    <img src="https://github.com/aayushgambhir2023/Bootcamp-Project4/blob/Lucas/templates/images/bg.jpg?raw=true" alt="Header Image" class="header-image">
+    
+    <nav class="navigation">
+        <ul>
+            <li><a href="#" id="bHome">Home</a></li>
+            <li><a href="#" id="bAnalisys">Budget Analysis</a></li>
+            <li><a href="#" id="bAPI">Our APIs</a></li>
+            <li><a href="#" id="bAbout">About us</a></li>
+        </ul>
+    </nav>
+
+    <aside class="side-menu" id="side-menu">
+        <ul>
+            <li>
+                <a href="#">Toronto Budget Categories</a>
+                <ul>
+                    <li><a href="#" id="submenu11">Categories by Year</a></li>
+                    <li><a href="#" id="submenu12">Sub-Categories by Year</a></li>
+                    <li><a href="#" id="submenu13">EDA Analysis</a></li>
+                    <li><a href="#" id="submenu14">Outliers - Revenue</a></li>
+                    <li><a href="#" id="submenu15">Outliers - Expense</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Toronto Programs</a>
+                <ul>
+                    <li><a href="#" id="submenu21">Programs by Year</a></li>
+                    <li><a href="#" id="submenu22">Program's History</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" id="subMenu3">Demographics Data</a>
+            </li>
+            <li>
+                <a href="#" id="subMenu4">Predictive Modeling (AI)</a>
+                <ul>
+                    <li><a href="#" id="submenu41">Forecasting by Category</a></li>
+                    <li><a href="#" id="submenu42">Forecasting by Program</a></li>
+                    <li><a href="#" id="submenu43">Clustering by Category</a></li>
+                    <li><a href="#" id="submenu44">Clustering by Program</a></li>
+                    <li><a href="#" id="submenu44">Clustering by Demographics</a></li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+
+    <div id="outputArea">
+        <div id="homeContent">
+            <h1>Welcome to the City of Toronto Budget Data Portal</h1>
+            <h2>Explore comprehensive budget data for the City of Toronto.</h2>
+            <div id="homebgimage">
+                <img src="https://tdot.com/wp-content/uploads/2020/09/New_Toronto_Sign_2020_Vers2_@mw_city_photography_web.jpg">
+            </div>
+        </div>
+        <div id="APIcontent">
+            <h2>Our API and their respective links.</h2>
+            <ul>
+                <li><a href="/api/v1.0/categories_rev" target="_blank">Revenue by Category</a></li>
+                <li><a href="/api/v1.0/categories_rev/<int:year>" target="_blank">Revenue by Category By Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/categories_exp" target="_blank">Expenses by Category</a></li>
+                <li><a href="/api/v1.0/categories_exp/<int:year>" target="_blank">Expenses by Category By Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/categories_exp_subcat" target="_blank">Revenue by Subcategory</a></li>
+                <li><a href="/api/v1.0/categories_exp_subcat/<int:year>" target="_blank">Revenue by Subcategory By Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/categories_rev_subcat" target="_blank">Expenses by Subcategory</a></li>
+                <li><a href="/api/v1.0/categories_rev_subcat/<int:year>" target="_blank">Expenses by Subcategory By Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/statsexp" target="_blank">Expenses EDA Analysis Data</a></li>
+                <li><a href="/api/v1.0/statsrev" target="_blank">Revenue EDA Analysis Data</a></li>
+                <li><a href="/api/v1.0/revenue_data_mm" target="_blank">Revenue Outliers Data</a></li>
+                <li><a href="/api/v1.0/expense_data_mm" target="_blank">Expenses Outliers Data</a></li>
+                <li><a href="/api/program_analysis/<year>" target="_blank">Budget by Program by Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/summarized_revenue_data/<int:year>" target="_blank">Revenue only by Program by Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/summarized_expense_data/<int:year>" target="_blank">Expense only by Program by Year (takes var: /<year>)</a></li>
+                <li><a href="/api/v1.0/summarized_profit_data/<int:year>" target="_blank">Profit only by Program by Year (takes var: /<year>)</a></li>
+                <li><a href="/api/program_analysis/all/" target="_blank">Budget by Program - all years combined</a></li>
+                <li><a href="/api/v1.0/city_wards_geo" target="_blank">City Wards Data</a></li>
+                <li><a href="/api/v1.0/demographic_data_2022_budget" target="_blank">Demographic Data (2022)</a></li>
+                <li><a href="/api/v1.0/demographic_graph_data" target="_blank">Demographic Data (Graph frindly)</a></li>
+                <li><a href="/api/v1.0/linear_regression_exp" target="_blank">A.I. Model Result Data - Categories Expenses</a></li>
+                <li><a href="/api/v1.0/linear_regression_rev" target="_blank">A.I. Model Result Data - Categories Revenue</a></li>
+                <!-- <Added by Anuradha as 4 new API> -->
+                <li><a href="/api/v1.0/linear_regress/actual_vs_predicted/<int:start_year>/<int:end_year>" target="_blank">Forecasting vs Actual(Linear Regression) - Categories Expenses</a></li>
+                <li><a href="/api/v1.0/poly_regress/actual_vs_predicted/<int:start_year>/<int:end_year>" target="_blank">Forecasting vs Actual(Polynomial Regression) - Categories Expenses</a></li>  
+                <li><a href="/api/v1.0/linear_regress_rev/actual_vs_predicted/<int:start_year>/<int:end_year>" target="_blank">Forecasting vs Actual(Linear Regression) - Categories Revenue</a></li>
+                <li><a href="/api/v1.0/poly_regress_rev/actual_vs_predicted/<int:start_year>/<int:end_year>" target="_blank">Forecasting vs Actual(Polynomial Regression) - Categories Revenue</a></li>  
+                <!-- <Added by Anuradha as 4 new API> -->
+                 <li><a href="/api/v1.0/category_rev_clustering" target="_blank">Category Revenue Clustering
+                <li><a href="/api/v1.0/category_exp_clustering" target="_blank">Category Expense Clustering
+            </ul>
+            <div id="homebgimage">
+                <img src="https://tdot.com/wp-content/uploads/2020/09/New_Toronto_Sign_2020_Vers2_@mw_city_photography_web.jpg">
+            </div>
+        </div>
+        <div id="aboutContent">
+            <h1>Our Team</h1>
+            <ul>
+                <li>Anuradha Kishore</li>
+                <li>Aayush Gambhir</li>
+                <li>Jason Tong</li>
+                <li>Lucas Girelli</li>
+                <li>Muskan Mittal</li>
+            </ul>
+            <h1>Data Sources:</h1>
+            <ul>
+                <li><a href="https://open.toronto.ca/dataset/city-wards/" target="_blank">City Wards Geospatial Data</a></li>
+                <li><a href="https://open.toronto.ca/dataset/budget-operating-budget-program-summary-by-expenditure-category/" target="_blank">Budget - Operating Budget Program Summary by Expenditure Category</a></li>
+                <li><a href="https://open.toronto.ca/dataset/budget-capital-budget-plan-by-ward-10-yr-approved/" target="_blank">Budget - Capital Budget & Plan By Ward</a></li>
+            </ul>
+            <div id="homebgimage">
+                <img src="https://tdot.com/wp-content/uploads/2020/09/New_Toronto_Sign_2020_Vers2_@mw_city_photography_web.jpg">
+            </div>
+        </div>
+        <div id="graphics-output"></div>
+        <div id="dropdown-container"></div>   <!-- <Added by Anuradha for dropdown container> -->
+    </div>
+
+  
+    
+    <script src="/static/js/Demographic.js"></script>
+    <script src="/static/js/summarized_revenue_expense_profit.js"></script>
+    <script src="/static/js/programHist.js"></script>
+    <script src="/static/js/outlier_rev_mm.js"></script>
+    <script src="/static/js/outlier_exp_mm.js"></script>
+    <script src="/static/js/eda.js"></script>
+    <script src="/static/js/Category_year.js"></script>
+    <script src="/static/js/subcat_year.js"></script>
+    <script src="/static/js/programCluster.js"></script>
+    <script src="/static/js/category_pred.js"></script>
+    <script src="/static/js/catclustering.js"></script>
+   
+
+
+    <script>
+
+        const homeLink = document.getElementById('bHome');
+        const budgetAnalysisLink = document.getElementById('bAnalisys');
+        const APILink = document.getElementById('bAPI');
+        const AboutLink = document.getElementById('bAbout');
+        const sideMenu = document.getElementById('side-menu');
+        const homeText = document.getElementById('homeContent');
+        const APIText = document.getElementById('APIcontent');
+        const AboutText = document.getElementById('aboutContent');
+        const graphArea = document.getElementById('graphics-output');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            homeLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                sideMenu.style.display = 'none';
+                homeText.style.display = 'block';
+                APIText.style.display = 'none';
+                AboutText.style.display = 'none';
+                graphArea.style.display = 'none';
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            budgetAnalysisLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                sideMenu.style.display = 'block';
+                homeText.style.display = 'none';
+                APIText.style.display = 'none';
+                AboutText.style.display = 'none';
+                graphArea.style.display = 'block';
+                graphArea.innerHTML = "";
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            APILink.addEventListener('click', function(event) {
+                event.preventDefault();
+                homeText.style.display = 'none';
+                sideMenu.style.display = 'none';
+                APIText.style.display = 'block';
+                AboutText.style.display = 'none';
+                graphArea.style.display = 'none';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            AboutLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                homeText.style.display = 'none';
+                sideMenu.style.display = 'none';
+                APIText.style.display = 'none';
+                AboutText.style.display = 'block';
+                graphArea.style.display = 'none';
+            });
+        });
+
+        sideMenu.style.display = 'none';
+        APIText.style.display = 'none';
+        AboutText.style.display = 'none';
+        graphArea.style.display = 'none';
+
+    </script>
+
+</body>
+</html>

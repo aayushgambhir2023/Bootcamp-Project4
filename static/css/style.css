@@ -1,0 +1,123 @@
+/************** Top image **************/
+.header-image {
+  width: 100%;
+  display: block;
+  justify-content: center;  
+}
+
+/************** Home backgrounds **************/
+
+#homebgimage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: -1;
+}
+
+#homebgimage img {
+  width: 100%;
+  height: auto;
+  opacity: 0.1;
+}
+
+#homeContent {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  font-family: "Arial";
+}
+
+#APIcontent {
+  font-family: "Arial";
+}
+
+#aboutContent {
+  font-family: "Arial";
+}
+
+
+/************** NAVIGATION BAR **************/
+.navigation {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgb(19, 60, 138);
+  padding: 20px;
+  display: flex;
+  justify-content: left;
+}
+
+.navigation ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  font-size: 32px;
+  font-family: "Arial";
+  font-weight: bold;
+}
+
+.navigation ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+.navigation ul li a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/************** SIDE MENU **************/
+.side-menu {
+  float: left;
+  width: 20%;
+  background-color: rgba(94, 134, 202, 0.75);
+  padding: 10px;
+  font-family: "Arial";
+}
+
+.side-menu ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.side-menu ul li {
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.side-menu ul li > a {
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.side-menu ul li ul {
+  /*display: none;*/
+  margin-left: 15px;
+}
+
+.side-menu ul li ul li > a {
+  font-size: 20px;
+  font-weight: normal; 
+}
+
+/************** API TEXT output **************/
+#APIcontent ul {
+  margin: 20px;
+  font-size: 25px;
+}
+
+/************** About TEXT output **************/
+#aboutContent ul {
+  margin: 20px;
+  font-size: 25px;
+}
+
+/************** Graphics output **************/
+#graphics-output {
+  margin-left: 100px;
+  height: 500px;
+}
+
