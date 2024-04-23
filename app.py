@@ -492,87 +492,78 @@ def linear_regression_rev_ak():
 
 #============================ML Clustering Demographics Start===============================
 #Jason's Supercode
+@app.route('/api/v1.0/Demo_AHC_Data', methods=['GET'])
+def AHC_Data():
+    # Load the pickled clustering model and DataFrame
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/agglomerative_clustering_model.pkl")
 
-def load_kmeans_model(model_file_path):
-    with open(model_file_path, 'rb') as file:
-        kmeans_model = pickle.load(file)
-    return kmeans_model
+    with open(model_file_path, 'rb') as f:
+        agg_clustering, demographic_df = pickle.load(f)
 
-# Define an endpoint for making predictions
-@app.route('/api/v1.0/predict_clusters', methods=['GET'])
-def predict_clusters():
-    # Load the pickled model
-    model_path = 'ML_modules/demographic_cluster/trained_models/K-means_clustering.pkl'  # Update this with the path to your model
-    kmeans_model = load_kmeans_model(model_path)
+    # Add cluster labels to the DataFrame
+    demographic_df['Cluster'] = agg_clustering.labels_
 
-    # Extract data from the request
-    data = request.get_json()
+    # Convert DataFrame to JSON
+    demographic_json = demographic_df.to_json(orient='records')
 
-    # Fetch demographic data from the API
-    api_url = "http://127.0.0.1:5000/api/v1.0/demographic_data_2022_budget"
-    response = requests.get(api_url)
-    if response.status_code != 200:
-        return jsonify({'error': 'Failed to fetch demographic data'})
+    return jsonify({'clusters': demographic_json})
 
-    # Preprocess data
-    data = response.json()
-    features = ['Average total income in 2020 among recipients ($)', 
-                'Median total income in 2020 among recipients ($)', 
-                '2022 Budget',
-                'Population density per square kilometre']
-    X = np.array([[row[feature] for feature in features] for row in data])
+@app.route('/api/v1.0/Demo_hierarchical_linkage', methods=['GET'])
+def HL_Data():
+    # Load the pickled clustering model and DataFrame
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/linkage_data.pkl")
 
-    # Feature scaling/standardization
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+    with open(model_file_path, 'rb') as f:
+        linkage_data = pickle.load(f)
 
-    # Predict clusters using the loaded K-means model
-    cluster_labels = kmeans_model.predict(X_scaled)
+    Z = linkage_data["linkage_matrix"]
+    ward_names = linkage_data["ward_names"]
 
-    # Add cluster labels to the data
-    for i, label in enumerate(cluster_labels):
-        data[i]['Cluster'] = label
+    return jsonify({
+        'linkage_matrix': Z.tolist(),
+        'ward_names': ward_names
+    })
 
-    # Return the data as JSON
-    return jsonify(data)
+import base64
 
-#+++++++++++++++++++
-# def load_pickled_model(pickle_file):
-#     with open(pickle_file, 'rb') as f:
-#         model = pickle.load(f)
-#     return model
+@app.route('/api/v1.0/Demo_K_Means', methods=['GET'])
+def KM_Data():
+    # Load the pickled clustering model and DataFrame
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/K-means_clustering.pkl")
 
-# kmeans_model = load_pickled_model('ML_modules/demographic_cluster/trained_models/K-means_clustering.pkl')
+    with open(model_file_path, 'rb') as f:
+        demographic_df, kmeans = pickle.load(f)
 
-# @app.route('/api/kmeans_data', methods=['GET'])
-# def get_kmeans_data():
-#     # Fetch demographic data from the API
-#     api_url = "http://127.0.0.1:5000/api/v1.0/demographic_data_2022_budget"
-#     response = requests.get(api_url)
-#     if response.status_code != 200:
-#         return jsonify({'error': 'Failed to fetch demographic data'})
+    # Add the cluster labels to the DataFrame
+    demographic_df["Cluster"] = kmeans.labels_
+    
+    # Convert DataFrame to JSON
+    demographic_json = demographic_df.to_json(orient='records')
 
-#     # Preprocess data
-#     data = response.json()
-#     features = ['Average total income in 2020 among recipients ($)', 
-#                 'Median total income in 2020 among recipients ($)', 
-#                 '2022 Budget',
-#                 'Population density per square kilometre']
-#     X = np.array([[row[feature] for feature in features] for row in data])
+    # Encode KMeans model to base64
+    kmeans_bytes = base64.b64encode(pickle.dumps(kmeans)).decode('utf-8')
 
-#     # Feature scaling/standardization
-#     scaler = StandardScaler()
-#     X_scaled = scaler.fit_transform(X)
+    return jsonify(demographic=demographic_json, kmeans_model=kmeans_bytes)
 
-#     # Predict clusters using the loaded K-means model
-#     cluster_labels = kmeans_model.predict(X_scaled)
+@app.route('/api/v1.0/Demo_Elbow_data', methods=['GET'])
+def Elbow_Data():
+    # Load the pickled clustering model and DataFrame
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/elbow_method_data.pkl")
 
-#     # Add cluster labels to the data
-#     for i, label in enumerate(cluster_labels):
-#         data[i]['Cluster'] = label
+    with open(model_file_path, 'rb') as f:
+        elbow_data = pickle.load(f)
 
-#     # Return the data as JSON
-#     return jsonify(data)
+    elbow_data['num_clusters'] = list(elbow_data['num_clusters'])
+    
+    return jsonify(elbow_data)
+
+
+
+
 
 #============================ML Clustering Demographics End===============================
 
