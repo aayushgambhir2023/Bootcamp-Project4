@@ -847,7 +847,7 @@ def AHC_Data():
 def HL_Data():
     # Load the pickled clustering model and DataFrame
     app_file_directory = os.path.dirname(os.path.abspath(__file__))
-    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/linkage_data.pkl")
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/hierarchical_linkage.pkl")
 
     with open(model_file_path, 'rb') as f:
         linkage_data = pickle.load(f)
@@ -856,7 +856,7 @@ def HL_Data():
     ward_names = linkage_data["ward_names"]
 
     return jsonify({
-        'linkage_matrix': Z.tolist(),
+        'linkage_matrix': Z,
         'ward_names': ward_names
     })
 
