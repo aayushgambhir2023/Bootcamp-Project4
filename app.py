@@ -6,6 +6,8 @@ from pymongo import MongoClient
 from scipy.stats import linregress
 import numpy as np
 import requests
+import os
+import pickle
 
 #Import ML Modules
 import os
@@ -824,6 +826,75 @@ def cluster_programs(no_clusters, year):
 
 #============================ML Clustering Demographics Start===============================
 #Jason's Supercode
+@app.route('/api/v1.0/Demo_AHC_Data', methods=['GET'])
+def AHC_Data():
+    # Load the pickled clustering model and DataFrame
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/agglomerative_clustering_model.pkl")
+
+    with open(model_file_path, 'rb') as f:
+        agg_clustering, demographic_df = pickle.load(f)
+
+    # Add cluster labels to the DataFrame
+    demographic_df['Cluster'] = agg_clustering.labels_
+
+    # Convert DataFrame to JSON
+    demographic_json = demographic_df.to_json(orient='records')
+
+    return jsonify({'clusters': demographic_json})
+
+@app.route('/api/v1.0/Demo_hierarchical_linkage', methods=['GET'])
+def HL_Data():
+    # Load the pickled clustering model and DataFrame
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/hierarchical_linkage.pkl")
+
+    with open(model_file_path, 'rb') as f:
+        linkage_data = pickle.load(f)
+
+    Z = linkage_data["linkage_matrix"]
+    ward_names = linkage_data["ward_names"]
+
+    return jsonify({
+        'linkage_matrix': Z,
+        'ward_names': ward_names
+    })
+
+import base64
+
+@app.route('/api/v1.0/Demo_K_Means', methods=['GET'])
+def KM_Data():
+    # Load the pickled clustering model and DataFrame
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/K-means_clustering.pkl")
+
+    with open(model_file_path, 'rb') as f:
+        demographic_df, kmeans = pickle.load(f)
+
+    # Add the cluster labels to the DataFrame
+    demographic_df["Cluster"] = kmeans.labels_
+    
+    # Convert DataFrame to JSON
+    demographic_json = demographic_df.to_json(orient='records')
+
+    # Encode KMeans model to base64
+    kmeans_bytes = base64.b64encode(pickle.dumps(kmeans)).decode('utf-8')
+
+    return jsonify(demographic=demographic_json, kmeans_model=kmeans_bytes)
+
+@app.route('/api/v1.0/Demo_Elbow_data', methods=['GET'])
+def Elbow_Data():
+    # Load the pickled clustering model and DataFrame
+    app_file_directory = os.path.dirname(os.path.abspath(__file__))
+    model_file_path = os.path.join(app_file_directory, f"ML_modules/demographic_cluster/trained_models/elbow_method_data.pkl")
+
+    with open(model_file_path, 'rb') as f:
+        elbow_data = pickle.load(f)
+
+    elbow_data['num_clusters'] = list(elbow_data['num_clusters'])
+
+    return jsonify(elbow_data)
+
 #============================ML Clustering Demographics End===============================
 
 ############################# OTHER APIs  ###############################
