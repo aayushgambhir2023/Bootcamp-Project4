@@ -558,12 +558,8 @@ def Elbow_Data():
         elbow_data = pickle.load(f)
 
     elbow_data['num_clusters'] = list(elbow_data['num_clusters'])
-    
+
     return jsonify(elbow_data)
-
-
-
-
 
 #============================ML Clustering Demographics End===============================
 
