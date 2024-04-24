@@ -60,7 +60,7 @@ function handleMenuClick89(menuId) {
 
     // Create dropdown container
     dropdownContainer.style.position = 'absolute';
-    dropdownContainer.style.top = '55%';
+    dropdownContainer.style.top = '60%';
     dropdownContainer.style.left = '25%';
     dropdownContainer.style.transform = 'translate(-50%, -50%)';
     dropdownContainer.style.zIndex = '9999'; // Ensure dropdown is on top of other elements
