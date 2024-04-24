@@ -57,82 +57,6 @@ collections_program = {
 def welcome():
     return render_template('index.html')
 #============================HomePage End===============================
-@app.route('/api/v1.0/category_exp_clustering')
-def category_exp_clustering():
-    collection_mm = db1['cat_expense_2014_2023']
-    cursor = collection_mm.find()  # Retrieve all documents
-    df = pd.DataFrame(list(cursor))
-    df.drop(columns='_id', inplace=True)
-    df = df[['Category Name'] + [col for col in df.columns if col != 'Category Name']]
-
-    # Extracting numerical columns for clustering
-    data_for_clustering = df.drop(columns=['Category Name'])
-    scaler = StandardScaler()
-    scaled_data = scaler.fit_transform(data_for_clustering)
-    scaled_df = pd.DataFrame(scaled_data, columns=data_for_clustering.columns)
-    scaled_df['Category Name'] = df['Category Name']
-
-    # Clustering process
-    num_samples = scaled_data.shape[0]
-    max_clusters = min(num_samples, 10)
-    k_values = range(1, max_clusters + 1)
-    inertia = []
-
-    for k in k_values:
-        kmeans = KMeans(n_clusters=k, random_state=0)
-        kmeans.fit(scaled_data)
-        inertia.append(kmeans.inertia_)
-
-    k_optimal = 3  # Assume optimal k is 3 after analysis
-    kmeans_optimal = KMeans(n_clusters=k_optimal, random_state=0)
-    kmeans_optimal.fit(scaled_df.drop('Category Name', axis=1))
-    Predicted_Clusters = kmeans_optimal.predict(scaled_df.drop('Category Name', axis=1))
-
-    # Adding predicted clusters to dataframe
-    scaled_df['Predicted Clusters'] = Predicted_Clusters
-
-    # Return JSON response
-    result = scaled_df[['Category Name', 'Predicted Clusters']].to_dict(orient='records')
-    return jsonify(result)
-
-
-@app.route('/api/v1.0/category_rev_clustering')
-def category_rev_clustering():
-    collection_m = db1['cat_revenue_2014_2023']
-    cursor = collection_m.find()  # Retrieve all documents
-    df = pd.DataFrame(list(cursor))
-    df.drop(columns='_id', inplace=True)
-    df = df[['Category Name'] + [col for col in df.columns if col != 'Category Name']]
-
-    # Extracting numerical columns for clustering
-    data_for_clustering = df.drop(columns=['Category Name'])
-    scaler = StandardScaler()
-    scaled_data = scaler.fit_transform(data_for_clustering)
-    scaled_df = pd.DataFrame(scaled_data, columns=data_for_clustering.columns)
-    scaled_df['Category Name'] = df['Category Name']
-
-    # Clustering process
-    num_samples = scaled_data.shape[0]
-    max_clusters = min(num_samples, 10)
-    k_values = range(1, max_clusters + 1)
-    inertia = []
-
-    for k in k_values:
-        kmeans = KMeans(n_clusters=k, random_state=0)
-        kmeans.fit(scaled_data)
-        inertia.append(kmeans.inertia_)
-
-    k_optimal = 3  # Assume optimal k is 3 after analysis
-    kmeans_optimal = KMeans(n_clusters=k_optimal, random_state=0)
-    kmeans_optimal.fit(scaled_df.drop('Category Name', axis=1))
-    Predicted_Clusters = kmeans_optimal.predict(scaled_df.drop('Category Name', axis=1))
-
-    # Adding predicted clusters to dataframe
-    scaled_df['Predicted Clusters'] = Predicted_Clusters
-
-    # Return JSON response
-    result = scaled_df[['Category Name', 'Predicted Clusters']].to_dict(orient='records')
-    return jsonify(result)
 
 #============================Categories Start===============================
 ## API to display all revenue data
@@ -855,7 +779,82 @@ def rev_actual_vs_predicted_poly_regress_static():
 #============================ML Forecasting Categories End===============================
 
 #============================ML Clustering Categories Start===============================
-#Muskan's ML Code
+@app.route('/api/v1.0/category_exp_clustering')
+def category_exp_clustering():
+    collection_mm = db1['cat_expense_2014_2023']
+    cursor = collection_mm.find()  # Retrieve all documents
+    df = pd.DataFrame(list(cursor))
+    df.drop(columns='_id', inplace=True)
+    df = df[['Category Name'] + [col for col in df.columns if col != 'Category Name']]
+
+    # Extracting numerical columns for clustering
+    data_for_clustering = df.drop(columns=['Category Name'])
+    scaler = StandardScaler()
+    scaled_data = scaler.fit_transform(data_for_clustering)
+    scaled_df = pd.DataFrame(scaled_data, columns=data_for_clustering.columns)
+    scaled_df['Category Name'] = df['Category Name']
+
+    # Clustering process
+    num_samples = scaled_data.shape[0]
+    max_clusters = min(num_samples, 10)
+    k_values = range(1, max_clusters + 1)
+    inertia = []
+
+    for k in k_values:
+        kmeans = KMeans(n_clusters=k, random_state=0)
+        kmeans.fit(scaled_data)
+        inertia.append(kmeans.inertia_)
+
+    k_optimal = 3  # Assume optimal k is 3 after analysis
+    kmeans_optimal = KMeans(n_clusters=k_optimal, random_state=0)
+    kmeans_optimal.fit(scaled_df.drop('Category Name', axis=1))
+    Predicted_Clusters = kmeans_optimal.predict(scaled_df.drop('Category Name', axis=1))
+
+    # Adding predicted clusters to dataframe
+    scaled_df['Predicted Clusters'] = Predicted_Clusters
+
+    # Return JSON response
+    result = scaled_df[['Category Name', 'Predicted Clusters']].to_dict(orient='records')
+    return jsonify(result)
+
+
+@app.route('/api/v1.0/category_rev_clustering')
+def category_rev_clustering():
+    collection_m = db1['cat_revenue_2014_2023']
+    cursor = collection_m.find()  # Retrieve all documents
+    df = pd.DataFrame(list(cursor))
+    df.drop(columns='_id', inplace=True)
+    df = df[['Category Name'] + [col for col in df.columns if col != 'Category Name']]
+
+    # Extracting numerical columns for clustering
+    data_for_clustering = df.drop(columns=['Category Name'])
+    scaler = StandardScaler()
+    scaled_data = scaler.fit_transform(data_for_clustering)
+    scaled_df = pd.DataFrame(scaled_data, columns=data_for_clustering.columns)
+    scaled_df['Category Name'] = df['Category Name']
+
+    # Clustering process
+    num_samples = scaled_data.shape[0]
+    max_clusters = min(num_samples, 10)
+    k_values = range(1, max_clusters + 1)
+    inertia = []
+
+    for k in k_values:
+        kmeans = KMeans(n_clusters=k, random_state=0)
+        kmeans.fit(scaled_data)
+        inertia.append(kmeans.inertia_)
+
+    k_optimal = 3  # Assume optimal k is 3 after analysis
+    kmeans_optimal = KMeans(n_clusters=k_optimal, random_state=0)
+    kmeans_optimal.fit(scaled_df.drop('Category Name', axis=1))
+    Predicted_Clusters = kmeans_optimal.predict(scaled_df.drop('Category Name', axis=1))
+
+    # Adding predicted clusters to dataframe
+    scaled_df['Predicted Clusters'] = Predicted_Clusters
+
+    # Return JSON response
+    result = scaled_df[['Category Name', 'Predicted Clusters']].to_dict(orient='records')
+    return jsonify(result)
 #============================ML Clustering Categories End===============================
 
 #============================ML Forecasting Programs Start===============================
