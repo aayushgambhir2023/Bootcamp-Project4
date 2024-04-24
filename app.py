@@ -859,6 +859,227 @@ def category_rev_clustering():
 
 #============================ML Forecasting Programs Start===============================
 #Aayush's ML Code
+@app.route('/api/rev_program_analysis/<year>')
+def get_rev_analysis_by_year(year):
+    try:
+        # Check if the provided year is valid
+        if year not in ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"]:
+            return jsonify({"error": "Invalid year provided"}), 400
+        
+        # Retrieve revenue data for the specified year
+        coll = db1[f"pNl_program_{year}"]
+        program_year_data = coll.find()
+
+        # Extract revenue data for each program for the year
+        revenue_data = []
+        for data in program_year_data:
+            revenue_data.append({
+                "Program": data["Program"],
+                "Revenue": data.get("rev", 0)
+            })
+
+        return jsonify({
+            "year": year,
+            "revenue_data": json.loads(json_util.dumps(revenue_data))
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+@app.route('/api/exp_program_analysis/<year>')
+def get_exp_analysis_by_year(year):
+    try:
+        # Check if the provided year is valid
+        if year not in ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"]:
+            return jsonify({"error": "Invalid year provided"}), 400
+        
+        # Retrieve revenue data for the specified year
+        coll = db1[f"pNl_program_{year}"]
+        program_year_data = coll.find()
+
+        # Extract revenue data for each program for the year
+        expense_data = []
+        for data in program_year_data:
+            expense_data.append({
+                "Program": data["Program"],
+                "Expense": data.get("exp", 0)
+            })
+
+        return jsonify({
+            "year": year,
+            "expense_data": json.loads(json_util.dumps(expense_data))
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+#Machine learning code
+@app.route('/api/predicted_exp/<int:year>', methods=['GET'])
+def predicted_exp(year):
+    try:
+        # Initialize variables to store training data for each program
+        program_data = {}
+
+        # Fetch expense data for each program for the years 2019 to 2023
+        for year_data in range(2014, 2024):
+            response = requests.get(f"http://127.0.0.1:5000/api/exp_program_analysis/{year_data}")
+            if response.status_code != 200:
+                return jsonify({"error": "Failed to fetch expense data from API"}), 500
+
+            data = response.json()
+            expense_data = data.get("expense_data", [])
+
+            # Store program expenses for each year
+            for program_info in expense_data:
+                program_name = program_info.get("Program", "")
+                expense = program_info.get("Expense", 0)
+
+                if program_name not in program_data:
+                    program_data[program_name] = {"years": [], "expenses": []}
+
+                program_data[program_name]["years"].append(year_data)
+                program_data[program_name]["expenses"].append(expense)
+
+        # Initialize a dictionary to store predicted expenses for the requested year
+        predicted_expenses = {}
+
+        # Train a linear regression model for each program that has data for 2023
+        for program_name, program_info in program_data.items():
+            if 2023 not in program_info["years"]:
+                continue  # Skip programs without data for 2023
+
+            X_train = [[yr] for yr in program_info["years"]]
+            y_train = program_info["expenses"]
+
+            # Train a linear regression model
+            model = LinearRegression()
+            model.fit(X_train, y_train)
+
+            # Make prediction for the requested year
+            predicted_expense = model.predict([[year]])[0]
+            predicted_expenses[program_name] = {
+                "Predicted expenses": predicted_expense
+            }
+
+        return jsonify(predicted_expenses)
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+
+@app.route('/api/predicted_rev/<int:year>', methods=['GET'])
+def predicted_rev(year):
+    try:
+        # Initialize variables to store training data for each program
+        program_data = {}
+
+        # Fetch revenue data for each program for the years 2019 to 2023
+        for year_data in range(2014, 2024):
+            response = requests.get(f"http://127.0.0.1:5000/api/rev_program_analysis/{year_data}")
+            if response.status_code != 200:
+                return jsonify({"error": "Failed to fetch revenue data from API"}), 500
+
+            data = response.json()
+            rev_data = data.get("revenue_data", [])
+
+            # Store program revenues for each year
+            for program_info in rev_data:
+                program_name = program_info.get("Program", "")
+                revenue = program_info.get("Revenue", 0)
+
+                if program_name not in program_data:
+                    program_data[program_name] = {"years": [], "revenues": []}
+
+                program_data[program_name]["years"].append(year_data)
+                program_data[program_name]["revenues"].append(revenue)
+        # Initialize a dictionary to store predicted revenues for the requested year
+        predicted_revenues = {}
+
+        # Train a linear regression model for each program that has data for 2023
+        for program_name, program_info in program_data.items():
+            if 2023 not in program_info["years"]:
+                continue  # Skip programs without data for 2023
+
+            X_train = [[yr] for yr in program_info["years"]]
+            y_train = program_info["revenues"]
+
+            # Train a linear regression model
+            model = LinearRegression()
+            model.fit(X_train, y_train)
+
+            # Make prediction for the requested year
+            predicted_revenue = model.predict([[year]])[0]
+            predicted_revenues[program_name] = {
+                "Predicted revenue": predicted_revenue
+            }
+
+        return jsonify(predicted_revenues)
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+
+@app.route('/api/complete_program_analysis/all/')
+def get_complete_program_analysis_all():
+    try:
+        yearlist = ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"]
+
+        # Initialize an empty dictionary to store program data for all years
+        all_program_data = {}
+
+        # Fetch actual data for each year and program
+        for year in yearlist:
+            coll = db1[f"pNl_program_{year}"]
+            actual_data = coll.find()
+            
+            # Add actual data to the all_program_data dictionary
+            for program_info in actual_data:
+                program_name = program_info.get("Program", "")
+                if program_name not in all_program_data:
+                    all_program_data[program_name] = {"data": []}
+
+                # Append actual expenses and revenues with the corresponding year
+                all_program_data[program_name]["data"].append({
+                    "year": year,
+                    "expenses": program_info.get("exp", 0),
+                    "revenues": program_info.get("rev", 0)
+                })
+
+        # Include predicted expenses and revenues for 2024 and 2025
+        # Fetch predicted expenses and revenues for 2024
+        response_exp_2024 = requests.get("http://127.0.0.1:5000/api/predicted_exp/2024")
+        response_rev_2024 = requests.get("http://127.0.0.1:5000/api/predicted_rev/2024")
+        # Fetch predicted expenses and revenues for 2025
+        response_exp_2025 = requests.get("http://127.0.0.1:5000/api/predicted_exp/2025")
+        response_rev_2025 = requests.get("http://127.0.0.1:5000/api/predicted_rev/2025")
+
+        # Add predicted data to all_program_data dictionary
+        for program_name, data in all_program_data.items():
+            if response_exp_2024.status_code == 200:
+                predicted_expenses_2024 = response_exp_2024.json()
+                predicted_revenues_2024 = response_rev_2024.json()
+                if program_name in predicted_expenses_2024:
+                    data["data"].append({
+                        "year": "2024",
+                        "expenses": predicted_expenses_2024[program_name]["Predicted expenses"],
+                        "revenues": predicted_revenues_2024[program_name]["Predicted revenue"]
+                    })
+
+            if response_exp_2025.status_code == 200:
+                predicted_expenses_2025 = response_exp_2025.json()
+                predicted_revenues_2025 = response_rev_2025.json()
+                if program_name in predicted_expenses_2025:
+                    data["data"].append({
+                        "year": "2025",
+                        "expenses": predicted_expenses_2025[program_name]["Predicted expenses"],
+                        "revenues": predicted_revenues_2025[program_name]["Predicted revenue"]
+                    })
+
+        return jsonify(all_program_data)
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 #============================ML Forecasting Programs End===============================
 
 #============================ML Clustering Programs Start===============================
