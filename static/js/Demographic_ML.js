@@ -34,8 +34,7 @@ submenu45.addEventListener('click', function(event) {
     graphicArea.append("div")
     .attr("id", "DemoHLTree")
     .style("width", "100%")
-    .html('<img src="https://raw.githubusercontent.com/aayushgambhir2023/Bootcamp-Project4/464ba620a67ed65ee360063f5a7405524d403fb9/ML_modules/demographic_cluster/Graphs/Demographic_HC_Dendrogram.png" style="width: 100%;">');
-
+    .html('<img src="https://raw.githubusercontent.com/aayushgambhir2023/Bootcamp-Project4/464ba620a67ed65ee360063f5a7405524d403fb9/ML_modules/demographic_cluster/Graphs/Demographic_HC_Dendrogram.png" style="display: block; margin: 0 auto; width: 60%;">');
 
     showElbowGraph()
     showClusterGraph()
