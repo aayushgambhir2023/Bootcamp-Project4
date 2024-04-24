@@ -1,5 +1,5 @@
 //Select your menu ID
-let selectedMenu = "submenu44";
+let selectedMenu44 = "submenu44";
 
 // create getJsonML function to retrieve response
 function getJsonML(url){
@@ -8,7 +8,7 @@ function getJsonML(url){
 
 //Event Listener to your main function
 document.addEventListener('DOMContentLoaded', function() {
-    const submenu1 = document.getElementById(selectedMenu);
+    const submenu1 = document.getElementById(selectedMenu44);
 
     submenu1.addEventListener('click', function(event) {
         event.preventDefault();
@@ -182,7 +182,7 @@ function generateGraphicML(){
                 r: 50,
                 b: 50
             },
-            width: 1555,
+            //width: 1555,
             height: 500,
             xaxis: {
                 showticklabels: false,
